@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STN Core - Survive The Night</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@300;400;500;600;700&display=swap');
+        .font-creepy { font-family: 'Creepster', cursive; }
+        .bg-gradient-night { background: linear-gradient(135deg, #0a0514 0%, #1a0a2e 50%, #0a0514 100%); }
+    </style>
+</head>
+<body class="bg-gradient-night min-h-screen text-gray-100 font-['Inter']">
+    <nav class="fixed top-0 w-full bg-black/80 backdrop-blur-md z-50 border-b border-purple-900/50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-3xl">🌙</span>
+                <span class="font-creepy text-2xl text-green-500">STN</span>
+                <span class="text-gray-400">/</span>
+                <span class="text-purple-400 font-semibold">core</span>
+            </a>
+            <a href="index.html" class="text-gray-300 hover:text-purple-400">Home</a>
+        </div>
+    </nav>
+
+    <header class="pt-32 pb-16 px-4 text-center">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-6xl mb-4">🔌</div>
+            <h1 class="font-creepy text-6xl text-purple-500 mb-4">stn-core</h1>
+            <p class="text-xl text-gray-300 mb-2">The Foundation</p>
+            <p class="text-gray-400">Shared APIs, events, and utilities for all STN mods.</p>
+            <div class="mt-6">
+                <span class="px-3 py-1 bg-purple-900/50 text-purple-400 rounded-full text-sm">REQUIRED BY ALL</span>
+            </div>
+        </div>
+    </header>
+
+    <section class="py-16 px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-purple-400 mb-8">API Interfaces</h2>
+
+            <div class="space-y-6">
+                <div class="bg-black/40 border border-purple-900/30 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-purple-400 mb-3">ISurvivalNightProvider</h3>
+                    <p class="text-gray-400 text-sm mb-4">Query survival night state from any mod.</p>
+                    <pre class="bg-black/50 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-gray-300">isSurvivalNightActive()     <span class="text-gray-500">// Is event running?</span>
+getDaysUntilSurvivalNight() <span class="text-gray-500">// Days until next</span>
+getSurvivalNightInterval()  <span class="text-gray-500">// Default interval</span>
+forceStart() / forceStop()  <span class="text-gray-500">// Admin controls</span>
+getMobsSpawned()            <span class="text-gray-500">// Current horde count</span>
+getTargetHordeSize()        <span class="text-gray-500">// Target for tonight</span></code></pre>
+                </div>
+
+                <div class="bg-black/40 border border-purple-900/30 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-purple-400 mb-3">IGamestageProvider</h3>
+                    <p class="text-gray-400 text-sm mb-4">Access gamestage progression data.</p>
+                    <pre class="bg-black/50 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-gray-300">getWorldGamestage()              <span class="text-gray-500">// Average of all players</span>
+getPlayerGamestage(player)       <span class="text-gray-500">// Specific player</span>
+getPlayerGamestage(uuid)         <span class="text-gray-500">// By UUID</span>
+addGamestage(player, amount)     <span class="text-gray-500">// Grant points</span>
+removeGamestage(player, amount)  <span class="text-gray-500">// Penalty</span>
+getHordeSizeMultiplier()         <span class="text-gray-500">// 1.0 to 2.5</span></code></pre>
+                </div>
+
+                <div class="bg-black/40 border border-purple-900/30 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-purple-400 mb-3">ISoundEmitter</h3>
+                    <p class="text-gray-400 text-sm mb-4">Register sounds for zombie sensory system.</p>
+                    <pre class="bg-black/50 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-gray-300">emitSound(world, pos, volume, type)  <span class="text-gray-500">// Alert zombies</span>
+SoundType: BLOCK_BREAK, DOOR, COMBAT, EXPLOSION, PLAYER_ACTION</code></pre>
+                </div>
+
+                <div class="bg-black/40 border border-purple-900/30 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-purple-400 mb-3">IDurabilityProvider</h3>
+                    <p class="text-gray-400 text-sm mb-4">Query and modify block durability.</p>
+                    <pre class="bg-black/50 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-gray-300">getDurability(world, pos)           <span class="text-gray-500">// Current HP</span>
+getMaxDurability(world, pos)        <span class="text-gray-500">// Max HP</span>
+damage(world, pos, amount)          <span class="text-gray-500">// Deal damage</span>
+repair(world, pos, amount)          <span class="text-gray-500">// Heal block</span></code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 px-4 bg-black/30">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-purple-400 mb-8">Events</h2>
+
+            <div class="bg-black/40 border border-purple-900/30 rounded-xl p-6">
+                <pre class="text-sm overflow-x-auto"><code class="text-gray-300"><span class="text-purple-400">STNEvents</span>.SURVIVAL_NIGHT_START  <span class="text-gray-500">// (world, gameDay)</span>
+<span class="text-purple-400">STNEvents</span>.SURVIVAL_NIGHT_END    <span class="text-gray-500">// (world, mobsSpawned, survived)</span>
+<span class="text-purple-400">STNEvents</span>.GAMESTAGE_CHANGED     <span class="text-gray-500">// (player, oldStage, newStage)</span>
+<span class="text-purple-400">STNEvents</span>.SOUND_REGISTERED      <span class="text-gray-500">// (world, pos, volume, type)</span>
+<span class="text-purple-400">STNEvents</span>.BLOCK_DAMAGED         <span class="text-gray-500">// (world, pos, damage, remaining)</span>
+<span class="text-purple-400">STNEvents</span>.BLOCK_REPAIRED        <span class="text-gray-500">// (world, pos, amount, newDurability)</span>
+<span class="text-purple-400">STNEvents</span>.BLOCK_DESTROYED       <span class="text-gray-500">// (world, pos)</span></code></pre>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 px-4 border-t border-purple-900/30 text-center">
+        <a href="index.html" class="text-purple-400 hover:text-purple-300">Back to STN Home</a>
+    </footer>
+</body>
+</html>

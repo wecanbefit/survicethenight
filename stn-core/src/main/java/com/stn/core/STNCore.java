@@ -1,7 +1,7 @@
 package com.stn.core;
 
 import com.stn.core.api.STNEvents;
-import com.stn.core.api.IBloodMoonProvider;
+import com.stn.core.api.ISurvivalNightProvider;
 import com.stn.core.api.IGamestageProvider;
 import com.stn.core.api.ISoundEmitter;
 import com.stn.core.api.IDurabilityProvider;
@@ -18,7 +18,7 @@ public class STNCore implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("STN");
 
     // API providers - set by addon mods
-    private static IBloodMoonProvider bloodMoonProvider;
+    private static ISurvivalNightProvider survivalNightProvider;
     private static IGamestageProvider gamestageProvider;
     private static ISoundEmitter soundEmitter;
     private static IDurabilityProvider durabilityProvider;
@@ -34,12 +34,12 @@ public class STNCore implements ModInitializer {
     }
 
     // API Registration Methods
-    public static void registerBloodMoonProvider(IBloodMoonProvider provider) {
-        if (bloodMoonProvider != null) {
-            LOGGER.warn("BloodMoonProvider already registered, overwriting!");
+    public static void registerSurvivalNightProvider(ISurvivalNightProvider provider) {
+        if (survivalNightProvider != null) {
+            LOGGER.warn("SurvivalNightProvider already registered, overwriting!");
         }
-        bloodMoonProvider = provider;
-        LOGGER.info("BloodMoonProvider registered: {}", provider.getClass().getSimpleName());
+        survivalNightProvider = provider;
+        LOGGER.info("SurvivalNightProvider registered: {}", provider.getClass().getSimpleName());
     }
 
     public static void registerGamestageProvider(IGamestageProvider provider) {
@@ -67,8 +67,8 @@ public class STNCore implements ModInitializer {
     }
 
     // API Getters
-    public static IBloodMoonProvider getBloodMoonProvider() {
-        return bloodMoonProvider;
+    public static ISurvivalNightProvider getSurvivalNightProvider() {
+        return survivalNightProvider;
     }
 
     public static IGamestageProvider getGamestageProvider() {
@@ -84,8 +84,8 @@ public class STNCore implements ModInitializer {
     }
 
     // Convenience methods
-    public static boolean isBloodMoonActive() {
-        return bloodMoonProvider != null && bloodMoonProvider.isBloodMoonActive();
+    public static boolean isSurvivalNightActive() {
+        return survivalNightProvider != null && survivalNightProvider.isSurvivalNightActive();
     }
 
     public static int getWorldGamestage() {

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STN Zombies - Survive The Night</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@300;400;500;600;700&display=swap');
+        .font-creepy { font-family: 'Creepster', cursive; }
+        .bg-gradient-night { background: linear-gradient(135deg, #051a05 0%, #0a2e0a 50%, #051a05 100%); }
+    </style>
+</head>
+<body class="bg-gradient-night min-h-screen text-gray-100 font-['Inter']">
+    <nav class="fixed top-0 w-full bg-black/80 backdrop-blur-md z-50 border-b border-green-900/50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-3xl">🌙</span>
+                <span class="font-creepy text-2xl text-green-500">STN</span>
+                <span class="text-gray-400">/</span>
+                <span class="text-green-400 font-semibold">zombies</span>
+            </a>
+            <a href="index.html" class="text-gray-300 hover:text-green-400">Home</a>
+        </div>
+    </nav>
+
+    <header class="pt-32 pb-16 px-4 text-center">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-6xl mb-4">🧟</div>
+            <h1 class="font-creepy text-6xl text-green-500 mb-4">stn-zombies</h1>
+            <p class="text-xl text-gray-300 mb-2">Custom Zombie Entities & AI</p>
+            <p class="text-gray-400">10 unique zombie variants with special abilities and GeckoLib animations.</p>
+            <div class="mt-6 flex justify-center gap-2">
+                <span class="px-3 py-1 bg-green-900/50 text-green-400 rounded-full text-sm">Depends: stn-core</span>
+                <span class="px-3 py-1 bg-green-900/50 text-green-400 rounded-full text-sm">Optional: stn-survival</span>
+            </div>
+        </div>
+    </header>
+
+    <section class="py-16 px-4">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-green-400 mb-8">Zombie Variants</h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-black/40 border border-green-900/30 rounded-xl p-6">
+                    <div class="text-3xl mb-2">🏃</div>
+                    <h3 class="text-xl font-semibold text-green-400">Feral Zombie</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 11+</p>
+                    <p class="text-gray-400 text-sm">Runs on all fours. Fast, agile, and terrifying. Drops Feral Claw.</p>
+                </div>
+
+                <div class="bg-black/40 border border-green-900/30 rounded-xl p-6">
+                    <div class="text-3xl mb-2">⚡</div>
+                    <h3 class="text-xl font-semibold text-green-400">Sprinter Zombie</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 26+</p>
+                    <p class="text-gray-400 text-sm">Lightning fast. Can outrun players. Drops Runner's Tendon.</p>
+                </div>
+
+                <div class="bg-black/40 border border-green-900/30 rounded-xl p-6">
+                    <div class="text-3xl mb-2">💣</div>
+                    <h3 class="text-xl font-semibold text-green-400">Bloated Zombie</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 0+</p>
+                    <p class="text-gray-400 text-sm">Slow but explodes on death dealing AoE damage. Drops Bile Sac.</p>
+                </div>
+
+                <div class="bg-black/40 border border-green-900/30 rounded-xl p-6">
+                    <div class="text-3xl mb-2">🔨</div>
+                    <h3 class="text-xl font-semibold text-green-400">Demolisher Zombie</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 51+</p>
+                    <p class="text-gray-400 text-sm">Smashes blocks on jump. High HP, destroys fortifications. Drops Demolisher Heart.</p>
+                </div>
+
+                <div class="bg-black/40 border border-green-900/30 rounded-xl p-6">
+                    <div class="text-3xl mb-2">📢</div>
+                    <h3 class="text-xl font-semibold text-green-400">Screamer Zombie</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 76+</p>
+                    <p class="text-gray-400 text-sm">Screams to summon reinforcements, then flees. Kill quickly! Drops Vocal Cords.</p>
+                </div>
+
+                <div class="bg-black/40 border border-green-900/30 rounded-xl p-6">
+                    <div class="text-3xl mb-2">🪓</div>
+                    <h3 class="text-xl font-semibold text-green-400">Lumberjack Zombie</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 11+</p>
+                    <p class="text-gray-400 text-sm">Carries an axe, breaks wooden blocks faster. 10% chance to drop Iron Axe.</p>
+                </div>
+
+                <div class="bg-black/40 border border-green-900/30 rounded-xl p-6">
+                    <div class="text-3xl mb-2">😤</div>
+                    <h3 class="text-xl font-semibold text-green-400">Enraged Zombie</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 26+</p>
+                    <p class="text-gray-400 text-sm">Gets faster and stronger as it takes damage. Berserker mode!</p>
+                </div>
+
+                <div class="bg-black/40 border border-green-900/30 rounded-xl p-6">
+                    <div class="text-3xl mb-2">💪</div>
+                    <h3 class="text-xl font-semibold text-green-400">Brute Zombie</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 51+</p>
+                    <p class="text-gray-400 text-sm">Massive HP, heavy damage, slow speed. Tank of the horde. 5% Mace drop.</p>
+                </div>
+
+                <div class="bg-black/40 border border-green-900/30 rounded-xl p-6">
+                    <div class="text-3xl mb-2">🏃‍♂️</div>
+                    <h3 class="text-xl font-semibold text-green-400">Streaker Zombie</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 26+</p>
+                    <p class="text-gray-400 text-sm">Digs underground to flank players. Carries a shovel. 10% Shovel drop.</p>
+                </div>
+
+                <div class="bg-black/40 border border-green-900/30 rounded-xl p-6">
+                    <div class="text-3xl mb-2">🦠</div>
+                    <h3 class="text-xl font-semibold text-green-400">Diseased Zombie</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 0+</p>
+                    <p class="text-gray-400 text-sm">Inflicts poison and hunger on hit. Spreads sickness through the horde.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 px-4 bg-black/30">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-green-400 mb-8">Sensory System</h2>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-black/40 border border-green-900/30 rounded-xl p-6">
+                    <div class="text-3xl mb-2">👂</div>
+                    <h3 class="text-xl font-semibold text-green-400">Sound Detection</h3>
+                    <p class="text-gray-400 text-sm">
+                        Zombies hear block breaking, doors, combat. Glass is loudest (1.0), dirt quietest (0.3).
+                        Range: 32 blocks. Sounds decay over 5 seconds.
+                    </p>
+                </div>
+
+                <div class="bg-black/40 border border-green-900/30 rounded-xl p-6">
+                    <div class="text-3xl mb-2">👃</div>
+                    <h3 class="text-xl font-semibold text-green-400">Smell Detection</h3>
+                    <p class="text-gray-400 text-sm">
+                        During Survival Night only, zombies can smell players through walls.
+                        Range: 64 blocks. Ignores line of sight.
+                    </p>
+                </div>
+
+                <div class="bg-black/40 border border-green-900/30 rounded-xl p-6">
+                    <div class="text-3xl mb-2">🏘️</div>
+                    <h3 class="text-xl font-semibold text-green-400">Village Targeting</h3>
+                    <p class="text-gray-400 text-sm">
+                        When no players detected, zombies target village structures (doors, bells).
+                        Range: 96 blocks. Fallback behavior.
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-8 bg-black/40 border border-green-900/30 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-200 mb-4">Priority Scoring (Weighted)</h3>
+                <div class="grid md:grid-cols-3 gap-4 text-sm">
+                    <div class="bg-black/30 rounded-lg p-3">
+                        <div class="text-green-400 font-mono">Sound Score</div>
+                        <p class="text-gray-400">(1 - distance/range) × volume × 100</p>
+                    </div>
+                    <div class="bg-black/30 rounded-lg p-3">
+                        <div class="text-green-400 font-mono">Smell Score</div>
+                        <p class="text-gray-400">(1 - distance/64) × 80</p>
+                    </div>
+                    <div class="bg-black/30 rounded-lg p-3">
+                        <div class="text-green-400 font-mono">Village Score</div>
+                        <p class="text-gray-400">(1 - distance/96) × 50</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 px-4 border-t border-green-900/30 text-center">
+        <a href="index.html" class="text-green-400 hover:text-green-300">Back to STN Home</a>
+    </footer>
+</body>
+</html>

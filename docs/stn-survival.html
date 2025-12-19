@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STN Survival - Survive The Night</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        stn: { 500: '#22c55e', 600: '#16a34a', 900: '#14532d' },
+                        survival: { 400: '#f87171', 500: '#ef4444', 600: '#dc2626', 900: '#7f1d1d' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@300;400;500;600;700&display=swap');
+        .font-creepy { font-family: 'Creepster', cursive; }
+        .bg-gradient-night { background: linear-gradient(135deg, #1a0505 0%, #2d0a0a 50%, #1a0505 100%); }
+        .glow-red { text-shadow: 0 0 10px rgba(239, 68, 68, 0.5), 0 0 20px rgba(239, 68, 68, 0.3); }
+    </style>
+</head>
+<body class="bg-gradient-night min-h-screen text-gray-100 font-['Inter']">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-black/80 backdrop-blur-md z-50 border-b border-survival-900/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="flex items-center gap-2">
+                    <span class="text-3xl">🌙</span>
+                    <span class="font-creepy text-2xl text-stn-500">STN</span>
+                    <span class="text-gray-400">/</span>
+                    <span class="text-survival-400 font-semibold">survival</span>
+                </a>
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="index.html" class="text-gray-300 hover:text-survival-400 transition-colors">Home</a>
+                    <a href="#features" class="text-gray-300 hover:text-survival-400 transition-colors">Features</a>
+                    <a href="#config" class="text-gray-300 hover:text-survival-400 transition-colors">Config</a>
+                    <a href="#gamestage" class="text-gray-300 hover:text-survival-400 transition-colors">Gamestage</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="pt-32 pb-16 px-4 text-center">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-6xl mb-4">🌙</div>
+            <h1 class="font-creepy text-6xl text-survival-500 glow-red mb-4">stn-survival</h1>
+            <p class="text-xl text-gray-300 mb-2">Survival Night Events & Gamestage Progression</p>
+            <p class="text-gray-400 max-w-2xl mx-auto">
+                The core event system. Every 6 days, hordes spawn in waves until dawn.
+                Gamestage progression scales difficulty based on your survival.
+            </p>
+            <div class="mt-6 flex justify-center gap-2">
+                <span class="px-3 py-1 bg-survival-900/50 text-survival-400 rounded-full text-sm">Depends: stn-core</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- What It Does -->
+    <section id="features" class="py-16 px-4">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-survival-400 mb-8">What It Does</h2>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-12">
+                <div class="bg-black/40 border border-survival-900/30 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-survival-400 mb-3">Survival Night Events</h3>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li>• Every <strong class="text-white">6 days</strong> (~2 hours real time), event triggers at nightfall</li>
+                        <li>• Hordes spawn in <strong class="text-white">waves every 30 seconds</strong> around players</li>
+                        <li>• Horde size scales with gamestage and player count</li>
+                        <li>• All horde mobs despawn at dawn</li>
+                        <li>• Server-to-client sync for visual effects</li>
+                    </ul>
+                </div>
+
+                <div class="bg-black/40 border border-survival-900/30 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-survival-400 mb-3">Gamestage Progression</h3>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li>• Tracks days survived, zombie kills, nights survived</li>
+                        <li>• World gamestage = average of all player gamestages</li>
+                        <li>• Higher gamestage unlocks deadlier zombies</li>
+                        <li>• Horde size multiplier increases with gamestage</li>
+                        <li>• Death penalty reduces gamestage</li>
+                    </ul>
+                </div>
+
+                <div class="bg-black/40 border border-survival-900/30 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-survival-400 mb-3">Horde Spawning</h3>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li>• Mobs spawn 24-48 blocks from players</li>
+                        <li>• Ground, aerial, and aquatic spawn positions</li>
+                        <li>• Jockeys spawn at higher gamestages</li>
+                        <li>• Boss spawns (Giants) at gamestage 100+</li>
+                        <li>• Custom zombies registered via API</li>
+                    </ul>
+                </div>
+
+                <div class="bg-black/40 border border-survival-900/30 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-survival-400 mb-3">Player Notifications</h3>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li>• "THE HORDE IS COMING!" announcement at start</li>
+                        <li>• Subtitle changes based on gamestage</li>
+                        <li>• Wither spawn sound for atmosphere</li>
+                        <li>• "Dawn breaks. You survived." on success</li>
+                        <li>• Gamestage milestone warnings</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Configuration -->
+    <section id="config" class="py-16 px-4 bg-black/30">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-survival-400 mb-8">Configuration</h2>
+
+            <!-- Timing -->
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-200 mb-4">Timing Settings</h3>
+                <div class="bg-black/40 border border-survival-900/30 rounded-xl overflow-hidden">
+                    <table class="w-full text-sm">
+                        <thead class="bg-survival-900/30">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-survival-400">Setting</th>
+                                <th class="px-4 py-3 text-left text-survival-400">Default</th>
+                                <th class="px-4 py-3 text-left text-survival-400">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-survival-900/20">
+                            <tr>
+                                <td class="px-4 py-3 text-blue-400 font-mono">SURVIVAL_NIGHT_INTERVAL</td>
+                                <td class="px-4 py-3 text-white">6</td>
+                                <td class="px-4 py-3 text-gray-400">Days between events (~2 hours real time)</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-blue-400 font-mono">SURVIVAL_NIGHT_START_HOUR</td>
+                                <td class="px-4 py-3 text-white">22</td>
+                                <td class="px-4 py-3 text-gray-400">In-game hour event starts (10 PM)</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-blue-400 font-mono">SURVIVAL_NIGHT_END_HOUR</td>
+                                <td class="px-4 py-3 text-white">6</td>
+                                <td class="px-4 py-3 text-gray-400">In-game hour event ends (6 AM)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Horde -->
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-200 mb-4">Horde Settings</h3>
+                <div class="bg-black/40 border border-survival-900/30 rounded-xl overflow-hidden">
+                    <table class="w-full text-sm">
+                        <thead class="bg-survival-900/30">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-survival-400">Setting</th>
+                                <th class="px-4 py-3 text-left text-survival-400">Default</th>
+                                <th class="px-4 py-3 text-left text-survival-400">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-survival-900/20">
+                            <tr>
+                                <td class="px-4 py-3 text-blue-400 font-mono">BASE_HORDE_SIZE</td>
+                                <td class="px-4 py-3 text-white">20</td>
+                                <td class="px-4 py-3 text-gray-400">Starting horde size at day 1</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-blue-400 font-mono">HORDE_SIZE_MULTIPLIER_PER_DAY</td>
+                                <td class="px-4 py-3 text-white">0.1</td>
+                                <td class="px-4 py-3 text-gray-400">+10% more zombies per day survived</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-blue-400 font-mono">MAX_HORDE_SIZE</td>
+                                <td class="px-4 py-3 text-white">200</td>
+                                <td class="px-4 py-3 text-gray-400">Maximum zombies in a single night</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-blue-400 font-mono">SPAWN_RADIUS_MIN</td>
+                                <td class="px-4 py-3 text-white">24</td>
+                                <td class="px-4 py-3 text-gray-400">Minimum spawn distance from player</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-blue-400 font-mono">SPAWN_RADIUS_MAX</td>
+                                <td class="px-4 py-3 text-white">48</td>
+                                <td class="px-4 py-3 text-gray-400">Maximum spawn distance from player</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-blue-400 font-mono">SPAWN_WAVE_INTERVAL</td>
+                                <td class="px-4 py-3 text-white">600</td>
+                                <td class="px-4 py-3 text-gray-400">Ticks between waves (30 seconds)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Difficulty -->
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-200 mb-4">Difficulty Scaling</h3>
+                <div class="bg-black/40 border border-survival-900/30 rounded-xl overflow-hidden">
+                    <table class="w-full text-sm">
+                        <thead class="bg-survival-900/30">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-survival-400">Setting</th>
+                                <th class="px-4 py-3 text-left text-survival-400">Default</th>
+                                <th class="px-4 py-3 text-left text-survival-400">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-survival-900/20">
+                            <tr>
+                                <td class="px-4 py-3 text-blue-400 font-mono">SCALE_WITH_PLAYER_COUNT</td>
+                                <td class="px-4 py-3 text-white">true</td>
+                                <td class="px-4 py-3 text-gray-400">Scale horde for multiplayer</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-blue-400 font-mono">PLAYER_COUNT_MULTIPLIER</td>
+                                <td class="px-4 py-3 text-white">0.5</td>
+                                <td class="px-4 py-3 text-gray-400">+50% horde per additional player</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-blue-400 font-mono">SURVIVAL_NIGHT_SPEED_MULTIPLIER</td>
+                                <td class="px-4 py-3 text-white">2.0</td>
+                                <td class="px-4 py-3 text-gray-400">Zombie speed during event (2x normal)</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-blue-400 font-mono">SURVIVAL_NIGHT_DAMAGE_MULTIPLIER</td>
+                                <td class="px-4 py-3 text-white">1.5</td>
+                                <td class="px-4 py-3 text-gray-400">Zombie damage during event (1.5x)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Gamestage -->
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-200 mb-4">Gamestage Formula</h3>
+                <div class="bg-black/40 border border-survival-900/30 rounded-xl overflow-hidden">
+                    <table class="w-full text-sm">
+                        <thead class="bg-survival-900/30">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-survival-400">Setting</th>
+                                <th class="px-4 py-3 text-left text-survival-400">Default</th>
+                                <th class="px-4 py-3 text-left text-survival-400">Effect</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-survival-900/20">
+                            <tr>
+                                <td class="px-4 py-3 text-blue-400 font-mono">GAMESTAGE_DAYS_MULTIPLIER</td>
+                                <td class="px-4 py-3 text-white">2</td>
+                                <td class="px-4 py-3 text-gray-400">+2 gamestage per day survived</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-blue-400 font-mono">GAMESTAGE_ZOMBIE_KILLS_DIVISOR</td>
+                                <td class="px-4 py-3 text-white">50</td>
+                                <td class="px-4 py-3 text-gray-400">+1 gamestage per 50 kills</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-blue-400 font-mono">GAMESTAGE_SURVIVAL_NIGHT_BONUS</td>
+                                <td class="px-4 py-3 text-white">5</td>
+                                <td class="px-4 py-3 text-gray-400">+5 gamestage per survival night</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-blue-400 font-mono">GAMESTAGE_DEATH_PENALTY</td>
+                                <td class="px-4 py-3 text-white">2</td>
+                                <td class="px-4 py-3 text-gray-400">-2 gamestage per death</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-4 bg-black/50 rounded-lg p-4 font-mono text-center text-survival-400">
+                    Gamestage = (Days × 2) + (Kills ÷ 50) + (Nights × 5) - (Deaths × 2)
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gamestage Tiers -->
+    <section id="gamestage" class="py-16 px-4">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-survival-400 mb-8">Gamestage Tiers</h2>
+
+            <div class="bg-black/40 border border-survival-900/30 rounded-xl overflow-hidden">
+                <table class="w-full">
+                    <thead class="bg-survival-900/30">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-survival-400">Gamestage</th>
+                            <th class="px-6 py-4 text-left text-survival-400">Unlocks</th>
+                            <th class="px-6 py-4 text-left text-survival-400">Horde Multiplier</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-survival-900/20">
+                        <tr>
+                            <td class="px-6 py-4 text-gray-300">0 - 10</td>
+                            <td class="px-6 py-4 text-green-400">Vanilla Zombies, Bloated, Diseased</td>
+                            <td class="px-6 py-4 text-gray-400">1.0x (Base)</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-gray-300">11 - 25</td>
+                            <td class="px-6 py-4 text-yellow-400">+ Feral, Lumberjack, Chicken Jockeys</td>
+                            <td class="px-6 py-4 text-gray-400">1.25x</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-gray-300">26 - 50</td>
+                            <td class="px-6 py-4 text-orange-400">+ Sprinter, Streaker, Enraged, Spider Jockeys</td>
+                            <td class="px-6 py-4 text-gray-400">1.5x</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-gray-300">51 - 75</td>
+                            <td class="px-6 py-4 text-red-400">+ Demolisher, Brute, Horse Jockeys</td>
+                            <td class="px-6 py-4 text-gray-400">1.75x</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-gray-300">76 - 100</td>
+                            <td class="px-6 py-4 text-purple-400">+ Screamer, Ravager Jockeys</td>
+                            <td class="px-6 py-4 text-gray-400">2.0x</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-gray-300">100+</td>
+                            <td class="px-6 py-4 text-survival-400 font-bold">+ Giant Boss (throws zombies, kicks blocks)</td>
+                            <td class="px-6 py-4 text-gray-400">2.5x</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Milestone Messages -->
+            <div class="mt-8 grid md:grid-cols-2 gap-4">
+                <div class="bg-black/40 border border-yellow-900/30 rounded-lg p-4">
+                    <div class="text-yellow-400 font-semibold mb-1">Gamestage 11+</div>
+                    <p class="text-gray-400 text-sm">"Feral zombies now appear in hordes!"</p>
+                </div>
+                <div class="bg-black/40 border border-orange-900/30 rounded-lg p-4">
+                    <div class="text-orange-400 font-semibold mb-1">Gamestage 26+</div>
+                    <p class="text-gray-400 text-sm">"Sprinter zombies are common. Run."</p>
+                </div>
+                <div class="bg-black/40 border border-red-900/30 rounded-lg p-4">
+                    <div class="text-red-400 font-semibold mb-1">Gamestage 51+</div>
+                    <p class="text-gray-400 text-sm">"Demolishers have arrived. Fortify your base!"</p>
+                </div>
+                <div class="bg-black/40 border border-purple-900/30 rounded-lg p-4">
+                    <div class="text-purple-400 font-semibold mb-1">Gamestage 76+</div>
+                    <p class="text-gray-400 text-sm">"Screamers roam the night. Silence is survival."</p>
+                </div>
+                <div class="bg-black/40 border border-survival-900/30 rounded-lg p-4 md:col-span-2">
+                    <div class="text-survival-400 font-semibold mb-1">Gamestage 100+</div>
+                    <p class="text-gray-400 text-sm">"Giants walk the earth. Nowhere is safe."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API -->
+    <section class="py-16 px-4 bg-black/30">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-survival-400 mb-8">API Usage</h2>
+
+            <div class="bg-black/40 border border-survival-900/30 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-200 mb-4">Checking Survival Night State</h3>
+                <pre class="bg-black/50 rounded-lg p-4 overflow-x-auto text-sm">
+<code class="text-gray-300">// Check if survival night is active
+<span class="text-blue-400">boolean</span> active = <span class="text-green-400">STNCore</span>.isSurvivalNightActive();
+
+// Get days until next survival night
+<span class="text-blue-400">int</span> daysLeft = <span class="text-green-400">STNCore</span>.getSurvivalNightProvider().getDaysUntilSurvivalNight();
+
+// Get current world gamestage
+<span class="text-blue-400">int</span> gamestage = <span class="text-green-400">STNCore</span>.getGamestageProvider().getWorldGamestage();
+
+// Get player-specific gamestage
+<span class="text-blue-400">int</span> playerGS = <span class="text-green-400">STNCore</span>.getGamestageProvider().getPlayerGamestage(player);</code></pre>
+            </div>
+
+            <div class="bg-black/40 border border-survival-900/30 rounded-xl p-6 mt-6">
+                <h3 class="text-lg font-semibold text-gray-200 mb-4">Listening to Events</h3>
+                <pre class="bg-black/50 rounded-lg p-4 overflow-x-auto text-sm">
+<code class="text-gray-300">// When survival night starts
+<span class="text-green-400">STNEvents</span>.SURVIVAL_NIGHT_START.register((world, gameDay) -> {
+    <span class="text-gray-500">// Trigger your effects here</span>
+});
+
+// When survival night ends
+<span class="text-green-400">STNEvents</span>.SURVIVAL_NIGHT_END.register((world, mobsSpawned, survived) -> {
+    <span class="text-gray-500">// Award bonuses, play sounds, etc.</span>
+});
+
+// When gamestage changes
+<span class="text-green-400">STNEvents</span>.GAMESTAGE_CHANGED.register((player, oldStage, newStage) -> {
+    <span class="text-gray-500">// Notify player of milestone</span>
+});</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-4 border-t border-survival-900/30">
+        <div class="max-w-7xl mx-auto text-center">
+            <a href="index.html" class="text-survival-400 hover:text-survival-300">Back to STN Home</a>
+            <p class="text-gray-600 text-sm mt-4">stn-survival | Part of Survive The Night</p>
+        </div>
+    </footer>
+</body>
+</html>

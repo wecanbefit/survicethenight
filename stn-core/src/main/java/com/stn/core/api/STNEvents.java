@@ -21,28 +21,28 @@ public final class STNEvents {
         // Events are initialized statically, nothing to do here
     }
 
-    // ==================== Blood Moon Events ====================
+    // ==================== Survival Night Events ====================
 
     /**
-     * Called when a blood moon starts.
+     * Called when a survival night starts.
      */
-    public static final Event<BloodMoonStart> BLOOD_MOON_START = EventFactory.createArrayBacked(
-        BloodMoonStart.class,
+    public static final Event<SurvivalNightStart> SURVIVAL_NIGHT_START = EventFactory.createArrayBacked(
+        SurvivalNightStart.class,
         callbacks -> (world, gameDay) -> {
-            for (BloodMoonStart callback : callbacks) {
-                callback.onBloodMoonStart(world, gameDay);
+            for (SurvivalNightStart callback : callbacks) {
+                callback.onSurvivalNightStart(world, gameDay);
             }
         }
     );
 
     /**
-     * Called when a blood moon ends.
+     * Called when a survival night ends.
      */
-    public static final Event<BloodMoonEnd> BLOOD_MOON_END = EventFactory.createArrayBacked(
-        BloodMoonEnd.class,
+    public static final Event<SurvivalNightEnd> SURVIVAL_NIGHT_END = EventFactory.createArrayBacked(
+        SurvivalNightEnd.class,
         callbacks -> (world, mobsSpawned, survived) -> {
-            for (BloodMoonEnd callback : callbacks) {
-                callback.onBloodMoonEnd(world, mobsSpawned, survived);
+            for (SurvivalNightEnd callback : callbacks) {
+                callback.onSurvivalNightEnd(world, mobsSpawned, survived);
             }
         }
     );
@@ -116,13 +116,13 @@ public final class STNEvents {
     // ==================== Event Interfaces ====================
 
     @FunctionalInterface
-    public interface BloodMoonStart {
-        void onBloodMoonStart(ServerWorld world, long gameDay);
+    public interface SurvivalNightStart {
+        void onSurvivalNightStart(ServerWorld world, long gameDay);
     }
 
     @FunctionalInterface
-    public interface BloodMoonEnd {
-        void onBloodMoonEnd(ServerWorld world, int mobsSpawned, boolean survived);
+    public interface SurvivalNightEnd {
+        void onSurvivalNightEnd(ServerWorld world, int mobsSpawned, boolean survived);
     }
 
     @FunctionalInterface

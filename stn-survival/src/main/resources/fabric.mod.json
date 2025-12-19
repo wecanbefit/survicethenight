@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "stn_survival",
+  "version": "${version}",
+  "name": "Survive The Night - Survival Night",
+  "description": "Survival night events, horde spawning, and gamestage progression",
+  "authors": ["wecanbefit"],
+  "contact": {
+    "homepage": "https://github.com/wecanbefit/survivethenight",
+    "sources": "https://github.com/wecanbefit/survivethenight"
+  },
+  "license": "MIT",
+  "icon": "assets/stn_survival/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.stn.survival.STNSurvival"],
+    "client": ["com.stn.survival.client.STNSurvivalClient"]
+  },
+  "mixins": [
+    "stn_survival.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21",
+    "java": ">=21",
+    "fabric-api": "*",
+    "stn_core": "*"
+  }
+}

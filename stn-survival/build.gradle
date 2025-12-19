@@ -1,0 +1,17 @@
+archivesBaseName = "stn-survival"
+
+dependencies {
+    // Depends on stn-core
+    implementation project(':stn-core')
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}

@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crafting Recipes - Survive The Night</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        blood: {
+                            50: '#fef2f2',
+                            100: '#fee2e2',
+                            200: '#fecaca',
+                            300: '#fca5a5',
+                            400: '#f87171',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                            800: '#991b1b',
+                            900: '#7f1d1d',
+                            950: '#450a0a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@300;400;500;600;700&display=swap');
+        .font-creepy { font-family: 'Creepster', cursive; }
+        .bg-gradient-blood {
+            background: linear-gradient(135deg, #1a0a0a 0%, #2d1010 50%, #1a0a0a 100%);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(185, 28, 28, 0.3);
+        }
+        .glow-red {
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.5), 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            max-width: 150px;
+            margin: 0 auto;
+        }
+        .recipe-slot {
+            width: 46px;
+            height: 46px;
+            background: #1a1a1a;
+            border: 2px solid #3d2020;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+        }
+        .recipe-slot img {
+            width: 32px;
+            height: 32px;
+            image-rendering: pixelated;
+        }
+        .recipe-arrow {
+            font-size: 2rem;
+            color: #dc2626;
+        }
+        .item-icon {
+            width: 48px;
+            height: 48px;
+            image-rendering: pixelated;
+        }
+        .item-icon-lg {
+            width: 64px;
+            height: 64px;
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body class="bg-gradient-blood min-h-screen text-gray-100 font-['Inter']">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-black/80 backdrop-blur-md z-50 border-b border-blood-900/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="flex items-center gap-2">
+                    <span class="text-3xl">🌙</span>
+                    <span class="font-creepy text-2xl text-blood-500 glow-red">STN</span>
+                </a>
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="index.html" class="text-gray-300 hover:text-blood-400 transition-colors">Home</a>
+                    <a href="index.html#features" class="text-gray-300 hover:text-blood-400 transition-colors">Features</a>
+                    <a href="index.html#monsters" class="text-gray-300 hover:text-blood-400 transition-colors">Zombies</a>
+                    <a href="index.html#defenses" class="text-gray-300 hover:text-blood-400 transition-colors">Defenses</a>
+                    <a href="recipes.html" class="text-blood-400 hover:text-blood-300 transition-colors">Recipes</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="pt-32 pb-12 px-4 text-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-20">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-blood-600 rounded-full blur-[128px]"></div>
+        </div>
+        <div class="relative z-10 max-w-4xl mx-auto">
+            <h1 class="font-creepy text-6xl md:text-7xl text-blood-500 glow-red mb-4">
+                Crafting Recipes
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Build your defenses with custom materials and fortification blocks
+            </p>
+        </div>
+    </header>
+
+    <!-- Base Materials -->
+    <section class="py-12 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-blood-400 mb-8">Base Materials</h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Steel Ingot -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6 card-hover">
+                    <h3 class="text-2xl font-semibold text-blood-400 mb-4 text-center">Steel Ingot</h3>
+                    <div class="flex items-center justify-center gap-8 mb-4">
+                        <div class="text-center">
+                            <img src="img/iron_ingot.png" alt="Iron Ingot" class="item-icon-lg mx-auto">
+                            <p class="text-sm text-gray-400 mt-2">Iron Ingot</p>
+                        </div>
+                        <div class="text-4xl">🔥</div>
+                        <div class="text-center">
+                            <div class="text-5xl">🔩</div>
+                            <p class="text-sm text-gray-400 mt-2">Steel Ingot</p>
+                        </div>
+                    </div>
+                    <div class="bg-black/30 rounded-lg p-3">
+                        <p class="text-gray-400 text-sm mb-2"><strong>Furnace:</strong> Smelt Iron Ingot (200 ticks)</p>
+                        <p class="text-gray-400 text-sm"><strong>Blast Furnace:</strong> Smelt Iron Ingot (100 ticks)</p>
+                    </div>
+                </div>
+
+                <!-- Reinforced Plating -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6 card-hover">
+                    <h3 class="text-2xl font-semibold text-blood-400 mb-4 text-center">Reinforced Plating</h3>
+                    <div class="flex items-center justify-center gap-6 mb-4">
+                        <div>
+                            <div class="recipe-grid">
+                                <div class="recipe-slot"><span class="text-xl">🔩</span></div>
+                                <div class="recipe-slot"><span class="text-xl">❤️</span></div>
+                                <div class="recipe-slot"><span class="text-xl">🔩</span></div>
+                                <div class="recipe-slot"><span class="text-xl">❤️</span></div>
+                                <div class="recipe-slot"><img src="img/iron_block.png" alt="Iron Block"></div>
+                                <div class="recipe-slot"><span class="text-xl">❤️</span></div>
+                                <div class="recipe-slot"><span class="text-xl">🔩</span></div>
+                                <div class="recipe-slot"><span class="text-xl">❤️</span></div>
+                                <div class="recipe-slot"><span class="text-xl">🔩</span></div>
+                            </div>
+                        </div>
+                        <div class="recipe-arrow">→</div>
+                        <div class="text-center">
+                            <div class="text-5xl">🛡️</div>
+                            <p class="text-sm text-gray-400 mt-2">x2</p>
+                        </div>
+                    </div>
+                    <div class="bg-black/30 rounded-lg p-3">
+                        <p class="text-gray-400 text-sm"><strong>Recipe:</strong> 4 Steel Ingots + 4 Demolisher Hearts + 1 Iron Block</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Spike Traps -->
+    <section class="py-12 px-4 bg-black/20">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-blood-400 mb-8">Spike Traps</h2>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Wooden Spikes -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6 card-hover">
+                    <h3 class="text-xl font-semibold text-green-400 mb-4 text-center">Wooden Spikes</h3>
+                    <div class="bg-black/30 rounded-lg p-3 mb-4">
+                        <p class="text-gray-400 text-sm mb-1"><strong>Damage:</strong> 2 (3 to hostile mobs)</p>
+                        <p class="text-gray-400 text-sm"><strong>Durability:</strong> ~100 hits • Shows cracks</p>
+                    </div>
+                    <div class="recipe-grid mx-auto mb-2">
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"><img src="img/stick.png" alt="Stick"></div>
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"><img src="img/stick.png" alt="Stick"></div>
+                        <div class="recipe-slot"><img src="img/oak_planks.png" alt="Planks"></div>
+                        <div class="recipe-slot"><img src="img/stick.png" alt="Stick"></div>
+                        <div class="recipe-slot"><img src="img/oak_planks.png" alt="Planks"></div>
+                        <div class="recipe-slot"><img src="img/oak_planks.png" alt="Planks"></div>
+                        <div class="recipe-slot"><img src="img/oak_planks.png" alt="Planks"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center">Sticks + Planks = 4</p>
+                </div>
+
+                <!-- Iron Spikes -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6 card-hover">
+                    <h3 class="text-xl font-semibold text-yellow-400 mb-4 text-center">Iron Spikes</h3>
+                    <div class="bg-black/30 rounded-lg p-3 mb-4">
+                        <p class="text-gray-400 text-sm mb-1"><strong>Damage:</strong> 4 (6 to hostile mobs)</p>
+                        <p class="text-gray-400 text-sm"><strong>Durability:</strong> ~250 hits • Shows cracks</p>
+                    </div>
+                    <div class="recipe-grid mx-auto mb-2">
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"><img src="img/iron_nugget.png" alt="Iron Nugget"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"><img src="img/iron_nugget.png" alt="Iron Nugget"></div>
+                        <div class="recipe-slot"><img src="img/iron_nugget.png" alt="Iron Nugget"></div>
+                        <div class="recipe-slot"><img src="img/iron_nugget.png" alt="Iron Nugget"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center">Iron Ingots + Iron Nuggets = 4</p>
+                </div>
+
+                <!-- Reinforced Spikes -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6 card-hover">
+                    <h3 class="text-xl font-semibold text-red-400 mb-4 text-center">Reinforced Spikes</h3>
+                    <div class="bg-black/30 rounded-lg p-3 mb-4">
+                        <p class="text-gray-400 text-sm mb-1"><strong>Damage:</strong> 6 (9 to hostile mobs)</p>
+                        <p class="text-gray-400 text-sm"><strong>Durability:</strong> ~500 hits • Shows cracks</p>
+                    </div>
+                    <div class="recipe-grid mx-auto mb-2">
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"><span class="text-xl">❤️</span></div>
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"><span class="text-xl">❤️</span></div>
+                        <div class="recipe-slot"><span class="text-xl">🔺</span></div>
+                        <div class="recipe-slot"><span class="text-xl">❤️</span></div>
+                        <div class="recipe-slot"><span class="text-xl">🔺</span></div>
+                        <div class="recipe-slot"><span class="text-xl">🔺</span></div>
+                        <div class="recipe-slot"><span class="text-xl">🔺</span></div>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center">Demolisher Hearts + Iron Spikes = 4</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reinforced Walls -->
+    <section class="py-12 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-blood-400 mb-8">Reinforced Walls</h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Reinforced Wood -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6 card-hover">
+                    <h3 class="text-lg font-semibold text-green-400 mb-4 text-center">Reinforced Wood</h3>
+                    <div class="bg-black/30 rounded-lg p-3 mb-4">
+                        <p class="text-gray-400 text-sm"><strong>Resistance:</strong> Breakable by zombies</p>
+                    </div>
+                    <div class="recipe-grid mx-auto mb-2">
+                        <div class="recipe-slot"><img src="img/oak_planks.png" alt="Planks"></div>
+                        <div class="recipe-slot"><img src="img/iron_nugget.png" alt="Iron Nugget"></div>
+                        <div class="recipe-slot"><img src="img/oak_planks.png" alt="Planks"></div>
+                        <div class="recipe-slot"><img src="img/iron_nugget.png" alt="Iron Nugget"></div>
+                        <div class="recipe-slot"><img src="img/oak_planks.png" alt="Planks"></div>
+                        <div class="recipe-slot"><img src="img/iron_nugget.png" alt="Iron Nugget"></div>
+                        <div class="recipe-slot"><img src="img/oak_planks.png" alt="Planks"></div>
+                        <div class="recipe-slot"><img src="img/iron_nugget.png" alt="Iron Nugget"></div>
+                        <div class="recipe-slot"><img src="img/oak_planks.png" alt="Planks"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center">Planks + Iron Nuggets = 4</p>
+                </div>
+
+                <!-- Reinforced Cobblestone -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6 card-hover">
+                    <h3 class="text-lg font-semibold text-yellow-400 mb-4 text-center">Reinforced Cobble</h3>
+                    <div class="bg-black/30 rounded-lg p-3 mb-4">
+                        <p class="text-gray-400 text-sm"><strong>Resistance:</strong> Slow break by zombies</p>
+                    </div>
+                    <div class="recipe-grid mx-auto mb-2">
+                        <div class="recipe-slot"><img src="img/cobblestone.png" alt="Cobblestone"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"><img src="img/cobblestone.png" alt="Cobblestone"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"><img src="img/cobblestone.png" alt="Cobblestone"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"><img src="img/cobblestone.png" alt="Cobblestone"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"><img src="img/cobblestone.png" alt="Cobblestone"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center">Cobblestone + Iron Ingots = 4</p>
+                </div>
+
+                <!-- Reinforced Iron -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6 card-hover">
+                    <h3 class="text-lg font-semibold text-orange-400 mb-4 text-center">Reinforced Iron</h3>
+                    <div class="bg-black/30 rounded-lg p-3 mb-4">
+                        <p class="text-gray-400 text-sm"><strong>Resistance:</strong> Zombie-proof!</p>
+                    </div>
+                    <div class="recipe-grid mx-auto mb-2">
+                        <div class="recipe-slot"><img src="img/iron_block.png" alt="Iron Block"></div>
+                        <div class="recipe-slot"><img src="img/diamond.png" alt="Diamond"></div>
+                        <div class="recipe-slot"><img src="img/iron_block.png" alt="Iron Block"></div>
+                        <div class="recipe-slot"><img src="img/diamond.png" alt="Diamond"></div>
+                        <div class="recipe-slot"><img src="img/iron_block.png" alt="Iron Block"></div>
+                        <div class="recipe-slot"><img src="img/diamond.png" alt="Diamond"></div>
+                        <div class="recipe-slot"><img src="img/iron_block.png" alt="Iron Block"></div>
+                        <div class="recipe-slot"><img src="img/diamond.png" alt="Diamond"></div>
+                        <div class="recipe-slot"><img src="img/iron_block.png" alt="Iron Block"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center">Iron Blocks + Diamonds = 2</p>
+                </div>
+
+                <!-- Steel Block -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6 card-hover">
+                    <h3 class="text-lg font-semibold text-red-400 mb-4 text-center">Steel Block</h3>
+                    <div class="bg-black/30 rounded-lg p-3 mb-4">
+                        <p class="text-gray-400 text-sm"><strong>Resistance:</strong> 10 + 50 blast</p>
+                    </div>
+                    <div class="recipe-grid mx-auto mb-2">
+                        <div class="recipe-slot"><span class="text-xl">🔩</span></div>
+                        <div class="recipe-slot"><span class="text-xl">🔩</span></div>
+                        <div class="recipe-slot"><span class="text-xl">🔩</span></div>
+                        <div class="recipe-slot"><span class="text-xl">🔩</span></div>
+                        <div class="recipe-slot"><span class="text-xl">🔩</span></div>
+                        <div class="recipe-slot"><span class="text-xl">🔩</span></div>
+                        <div class="recipe-slot"><span class="text-xl">🔩</span></div>
+                        <div class="recipe-slot"><span class="text-xl">🔩</span></div>
+                        <div class="recipe-slot"><span class="text-xl">🔩</span></div>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center">9 Steel Ingots = 1</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hazard Blocks -->
+    <section class="py-12 px-4 bg-black/20">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-blood-400 mb-8">Hazard Blocks</h2>
+
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Barbed Wire -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6 card-hover">
+                    <h3 class="text-2xl font-semibold text-yellow-400 mb-4 text-center">Barbed Wire</h3>
+                    <div class="bg-black/30 rounded-lg p-4 mb-4">
+                        <p class="text-gray-400 text-sm mb-1"><strong>Damage:</strong> 1.5 (3 to hostile mobs)</p>
+                        <p class="text-gray-400 text-sm mb-1"><strong>Durability:</strong> ~200 hits • Shows cracks</p>
+                        <p class="text-gray-400 text-sm"><strong>Effect:</strong> Slows to 25% speed</p>
+                    </div>
+                    <div class="recipe-grid mx-auto mb-2">
+                        <div class="recipe-slot"><img src="img/iron_nugget.png" alt="Iron Nugget"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"><img src="img/iron_nugget.png" alt="Iron Nugget"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"><img src="img/iron_nugget.png" alt="Iron Nugget"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"><img src="img/iron_nugget.png" alt="Iron Nugget"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"><img src="img/iron_nugget.png" alt="Iron Nugget"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center">Iron Nuggets + Iron Ingots = 8</p>
+                </div>
+
+                <!-- Electric Fence -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6 card-hover">
+                    <h3 class="text-2xl font-semibold text-cyan-400 mb-4 text-center">Electric Fence</h3>
+                    <div class="bg-black/30 rounded-lg p-4 mb-4">
+                        <p class="text-gray-400 text-sm mb-1"><strong>Damage:</strong> 4 (8 to hostile mobs)</p>
+                        <p class="text-gray-400 text-sm mb-1"><strong>Durability:</strong> ~300 hits • Shows cracks</p>
+                        <p class="text-gray-400 text-sm mb-1"><strong>Effect:</strong> Stuns + Knockback</p>
+                        <p class="text-gray-400 text-sm"><strong>Special:</strong> Requires redstone, chains 64 blocks</p>
+                    </div>
+                    <div class="recipe-grid mx-auto mb-2">
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"><img src="img/gold_ingot.png" alt="Gold Ingot"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"><img src="img/gold_ingot.png" alt="Gold Ingot"></div>
+                        <div class="recipe-slot"><img src="img/redstone_block.png" alt="Redstone Block"></div>
+                        <div class="recipe-slot"><img src="img/gold_ingot.png" alt="Gold Ingot"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"><img src="img/gold_ingot.png" alt="Gold Ingot"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center">Iron Ingots + Gold Ingots + Redstone Block = 4</p>
+                </div>
+
+                <!-- Motion Sensor -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6 card-hover">
+                    <h3 class="text-2xl font-semibold text-green-400 mb-4 text-center">Motion Sensor</h3>
+                    <div class="bg-black/30 rounded-lg p-4 mb-4">
+                        <p class="text-gray-400 text-sm mb-1"><strong>Range:</strong> 8 blocks directional</p>
+                        <p class="text-gray-400 text-sm mb-1"><strong>Detects:</strong> Hostile mobs only</p>
+                        <p class="text-gray-400 text-sm"><strong>Output:</strong> Redstone signal (power 15)</p>
+                    </div>
+                    <div class="recipe-grid mx-auto mb-2">
+                        <div class="recipe-slot"><img src="img/iron_nugget.png" alt="Iron Nugget"></div>
+                        <div class="recipe-slot"><img src="img/redstone.png" alt="Redstone"></div>
+                        <div class="recipe-slot"><img src="img/iron_nugget.png" alt="Iron Nugget"></div>
+                        <div class="recipe-slot"><img src="img/redstone.png" alt="Redstone"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"><img src="img/redstone.png" alt="Redstone"></div>
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center">Iron + Redstone = 2</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools -->
+    <section class="py-12 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-blood-400 mb-8">Repair Hammers</h2>
+            <p class="text-center text-gray-400 mb-8">Five tiers of hammers for repairing damaged blocks and traps. Higher tiers repair more per use!</p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Wooden Hammer -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6 card-hover">
+                    <h3 class="text-xl font-semibold text-green-400 mb-4 text-center">Wooden Hammer</h3>
+                    <div class="bg-black/30 rounded-lg p-3 mb-4">
+                        <p class="text-gray-400 text-sm mb-1"><strong>Durability:</strong> 59 uses</p>
+                        <p class="text-gray-400 text-sm"><strong>Repair:</strong> 10 HP per use</p>
+                    </div>
+                    <div class="recipe-grid mx-auto mb-2">
+                        <div class="recipe-slot"><img src="img/stick.png" alt="Stick"></div>
+                        <div class="recipe-slot"><img src="img/stick.png" alt="Stick"></div>
+                        <div class="recipe-slot"><img src="img/oak_planks.png" alt="Planks"></div>
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"><img src="img/stick.png" alt="Stick"></div>
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"><img src="img/stick.png" alt="Stick"></div>
+                        <div class="recipe-slot"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center">SSP pattern + 2 Sticks</p>
+                </div>
+
+                <!-- Stone Hammer -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6 card-hover">
+                    <h3 class="text-xl font-semibold text-gray-400 mb-4 text-center">Stone Hammer</h3>
+                    <div class="bg-black/30 rounded-lg p-3 mb-4">
+                        <p class="text-gray-400 text-sm mb-1"><strong>Durability:</strong> 131 uses</p>
+                        <p class="text-gray-400 text-sm"><strong>Repair:</strong> 15 HP per use</p>
+                    </div>
+                    <div class="recipe-grid mx-auto mb-2">
+                        <div class="recipe-slot"><img src="img/stick.png" alt="Stick"></div>
+                        <div class="recipe-slot"><img src="img/stick.png" alt="Stick"></div>
+                        <div class="recipe-slot"><img src="img/cobblestone.png" alt="Cobblestone"></div>
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"><img src="img/stick.png" alt="Stick"></div>
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"><img src="img/stick.png" alt="Stick"></div>
+                        <div class="recipe-slot"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center">SSC pattern + 2 Sticks</p>
+                </div>
+
+                <!-- Iron Hammer -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6 card-hover">
+                    <h3 class="text-xl font-semibold text-orange-400 mb-4 text-center">Iron Hammer</h3>
+                    <div class="bg-black/30 rounded-lg p-3 mb-4">
+                        <p class="text-gray-400 text-sm mb-1"><strong>Durability:</strong> 250 uses</p>
+                        <p class="text-gray-400 text-sm"><strong>Repair:</strong> 25 HP per use</p>
+                    </div>
+                    <div class="recipe-grid mx-auto mb-2">
+                        <div class="recipe-slot"><img src="img/iron_nugget.png" alt="Iron Nugget"></div>
+                        <div class="recipe-slot"><img src="img/iron_nugget.png" alt="Iron Nugget"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"><img src="img/stick.png" alt="Stick"></div>
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"><img src="img/stick.png" alt="Stick"></div>
+                        <div class="recipe-slot"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center">NNI pattern + 2 Sticks</p>
+                </div>
+
+                <!-- Diamond Hammer -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6 card-hover">
+                    <h3 class="text-xl font-semibold text-cyan-400 mb-4 text-center">Diamond Hammer</h3>
+                    <div class="bg-black/30 rounded-lg p-3 mb-4">
+                        <p class="text-gray-400 text-sm mb-1"><strong>Durability:</strong> 1561 uses</p>
+                        <p class="text-gray-400 text-sm"><strong>Repair:</strong> 40 HP per use</p>
+                    </div>
+                    <div class="recipe-grid mx-auto mb-2">
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"><img src="img/iron_ingot.png" alt="Iron Ingot"></div>
+                        <div class="recipe-slot"><img src="img/diamond.png" alt="Diamond"></div>
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"><img src="img/stick.png" alt="Stick"></div>
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"></div>
+                        <div class="recipe-slot"><img src="img/stick.png" alt="Stick"></div>
+                        <div class="recipe-slot"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center">IID pattern + 2 Sticks</p>
+                </div>
+
+                <!-- Netherite Hammer -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6 card-hover">
+                    <h3 class="text-xl font-semibold text-purple-400 mb-4 text-center">Netherite Hammer</h3>
+                    <div class="bg-black/30 rounded-lg p-3 mb-4">
+                        <p class="text-gray-400 text-sm mb-1"><strong>Durability:</strong> 2031 uses</p>
+                        <p class="text-gray-400 text-sm"><strong>Repair:</strong> 60 HP per use</p>
+                    </div>
+                    <div class="flex items-center justify-center gap-4 mb-2">
+                        <div class="text-center">
+                            <div class="recipe-slot mx-auto"><span class="text-xl">💎</span></div>
+                            <p class="text-xs text-gray-500 mt-1">Diamond Hammer</p>
+                        </div>
+                        <div class="text-2xl text-blood-400">+</div>
+                        <div class="text-center">
+                            <div class="recipe-slot mx-auto"><img src="img/netherite_ingot.png" alt="Netherite Ingot"></div>
+                            <p class="text-xs text-gray-500 mt-1">Netherite Ingot</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center">Smithing Table upgrade</p>
+                </div>
+
+                <!-- Hammer Usage Info -->
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-blood-400 mb-4 text-center">How Hammers Work</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="bg-black/30 rounded p-3">
+                            <p class="text-gray-300 font-medium mb-1">Simple Blocks</p>
+                            <p class="text-gray-500 text-xs">Just uses hammer durability. Works on any player-placed block.</p>
+                        </div>
+                        <div class="bg-black/30 rounded p-3">
+                            <p class="text-gray-300 font-medium mb-1">Wooden Traps (Spikes)</p>
+                            <p class="text-gray-500 text-xs">Requires Sticks in inventory to repair.</p>
+                        </div>
+                        <div class="bg-black/30 rounded p-3">
+                            <p class="text-gray-300 font-medium mb-1">Metal Traps (Iron Spikes, Wire, Fence)</p>
+                            <p class="text-gray-500 text-xs">Requires Iron Nuggets in inventory to repair.</p>
+                        </div>
+                        <div class="bg-black/30 rounded p-3">
+                            <p class="text-gray-300 font-medium mb-1">HUD Display</p>
+                            <p class="text-gray-500 text-xs">Hold hammer and look at blocks to see durability!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Zombie Drops -->
+    <section class="py-12 px-4 bg-black/20">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-blood-400 mb-8">Zombie Drops</h2>
+            <p class="text-center text-gray-400 mb-8">Custom items dropped by special zombies - used in crafting!</p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6">
+                    <div class="text-5xl text-center mb-3">🦴</div>
+                    <h3 class="text-xl font-semibold text-blood-400 mb-2 text-center">Feral Claw</h3>
+                    <p class="text-gray-400 text-sm text-center">Dropped by Feral Zombies</p>
+                </div>
+
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6">
+                    <div class="text-5xl text-center mb-3">💚</div>
+                    <h3 class="text-xl font-semibold text-blood-400 mb-2 text-center">Bile Sac</h3>
+                    <p class="text-gray-400 text-sm text-center">Dropped by Bloated Zombies</p>
+                </div>
+
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6">
+                    <div class="text-5xl text-center mb-3">🦵</div>
+                    <h3 class="text-xl font-semibold text-blood-400 mb-2 text-center">Runner's Tendon</h3>
+                    <p class="text-gray-400 text-sm text-center">Dropped by Sprinter Zombies</p>
+                </div>
+
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6">
+                    <div class="text-5xl text-center mb-3">❤️</div>
+                    <h3 class="text-xl font-semibold text-blood-400 mb-2 text-center">Demolisher Heart</h3>
+                    <p class="text-gray-400 text-sm text-center">Dropped by Demolisher Zombies<br><span class="text-yellow-400">Used in Reinforced Plating & Spikes!</span></p>
+                </div>
+
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6">
+                    <div class="text-5xl text-center mb-3">🗣️</div>
+                    <h3 class="text-xl font-semibold text-blood-400 mb-2 text-center">Screamer Vocal Cords</h3>
+                    <p class="text-gray-400 text-sm text-center">Dropped by Screamer Zombies</p>
+                </div>
+
+                <div class="bg-black/40 border border-blood-900/30 rounded-xl p-6">
+                    <div class="text-5xl text-center mb-3">🪓</div>
+                    <h3 class="text-xl font-semibold text-blood-400 mb-2 text-center">Equipment Drops</h3>
+                    <p class="text-gray-400 text-sm text-center">
+                        Iron Axe (Lumberjack 10%)<br>
+                        Mace (Brute 5%)<br>
+                        Iron Shovel (Streaker 10%)
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Legend -->
+    <section class="py-8 px-4 bg-black/30">
+        <div class="max-w-4xl mx-auto">
+            <h3 class="text-xl font-semibold text-blood-400 mb-4 text-center">Recipe Legend</h3>
+            <div class="flex flex-wrap justify-center gap-6">
+                <div class="flex items-center gap-2">
+                    <img src="img/iron_ingot.png" alt="Iron Ingot" class="w-8 h-8" style="image-rendering: pixelated;">
+                    <span class="text-gray-400 text-sm">Iron Ingot</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <img src="img/iron_nugget.png" alt="Iron Nugget" class="w-8 h-8" style="image-rendering: pixelated;">
+                    <span class="text-gray-400 text-sm">Iron Nugget</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <img src="img/iron_block.png" alt="Iron Block" class="w-8 h-8" style="image-rendering: pixelated;">
+                    <span class="text-gray-400 text-sm">Iron Block</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <img src="img/diamond.png" alt="Diamond" class="w-8 h-8" style="image-rendering: pixelated;">
+                    <span class="text-gray-400 text-sm">Diamond</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <img src="img/gold_ingot.png" alt="Gold Ingot" class="w-8 h-8" style="image-rendering: pixelated;">
+                    <span class="text-gray-400 text-sm">Gold Ingot</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <img src="img/redstone_block.png" alt="Redstone Block" class="w-8 h-8" style="image-rendering: pixelated;">
+                    <span class="text-gray-400 text-sm">Redstone Block</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <img src="img/redstone.png" alt="Redstone" class="w-8 h-8" style="image-rendering: pixelated;">
+                    <span class="text-gray-400 text-sm">Redstone</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">🔩</span>
+                    <span class="text-gray-400 text-sm">Steel Ingot (mod)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">❤️</span>
+                    <span class="text-gray-400 text-sm">Demolisher Heart (mod)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">🔺</span>
+                    <span class="text-gray-400 text-sm">Iron Spikes (mod)</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-4 border-t border-blood-900/30">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <span class="text-3xl">🌙</span>
+                <span class="font-creepy text-3xl text-blood-500 glow-red">Survive The Night</span>
+            </div>
+            <p class="text-gray-500 mb-4">
+                <a href="index.html" class="text-blood-400 hover:text-blood-300">Back to Main Page</a>
+            </p>
+            <p class="text-gray-600 text-sm">
+                Minecraft 1.21 Fabric Mod Suite
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scroll to top button -->
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+            class="fixed bottom-8 right-8 w-12 h-12 bg-blood-600 hover:bg-blood-700 rounded-full flex items-center justify-center transition-colors shadow-lg shadow-blood-900/50">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+        </svg>
+    </button>
+</body>
+</html>

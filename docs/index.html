@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survive The Night - Minecraft 1.21 Fabric Mod</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        stn: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                            950: '#052e16',
+                        },
+                        night: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@300;400;500;600;700&display=swap');
+        .font-creepy { font-family: 'Creepster', cursive; }
+        .bg-gradient-night {
+            background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #020617 100%);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(34, 197, 94, 0.2);
+        }
+        .glow-green {
+            text-shadow: 0 0 10px rgba(34, 197, 94, 0.5), 0 0 20px rgba(34, 197, 94, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gradient-night min-h-screen text-gray-100 font-['Inter']">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-black/80 backdrop-blur-md z-50 border-b border-stn-900/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-2">
+                    <span class="text-3xl">🌙</span>
+                    <span class="font-creepy text-2xl text-stn-500 glow-green">Survive The Night</span>
+                </div>
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="#mods" class="text-gray-300 hover:text-stn-400 transition-colors">Mods</a>
+                    <a href="#features" class="text-gray-300 hover:text-stn-400 transition-colors">Features</a>
+                    <a href="recipes.html" class="text-gray-300 hover:text-stn-400 transition-colors">Recipes</a>
+                    <a href="#install" class="text-gray-300 hover:text-stn-400 transition-colors">Install</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="pt-32 pb-20 px-4 text-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-20">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-stn-600 rounded-full blur-[128px]"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-stn-800 rounded-full blur-[96px]"></div>
+        </div>
+        <div class="relative z-10 max-w-4xl mx-auto">
+            <h1 class="font-creepy text-7xl md:text-8xl text-stn-500 glow-green mb-6">
+                Survive The Night
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-300 mb-4">
+                A Modular Minecraft 1.21 Fabric Mod Suite
+            </p>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto mb-8">
+                A zombie survival experience with horde nights, custom zombies, fortification blocks,
+                and progressive difficulty. Mix and match mods to customize your experience.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#install" class="px-8 py-3 bg-stn-600 hover:bg-stn-700 rounded-lg font-semibold transition-colors">
+                    Download Mods
+                </a>
+                <a href="#mods" class="px-8 py-3 bg-gray-800 hover:bg-gray-700 rounded-lg font-semibold transition-colors border border-gray-700">
+                    Explore Mods
+                </a>
+            </div>
+
+            <!-- Stats -->
+            <div class="mt-12 grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
+                <div class="bg-black/40 border border-stn-900/30 rounded-lg p-4">
+                    <div class="text-3xl font-bold text-stn-500">5</div>
+                    <div class="text-gray-400 text-sm">Modular Mods</div>
+                </div>
+                <div class="bg-black/40 border border-stn-900/30 rounded-lg p-4">
+                    <div class="text-3xl font-bold text-stn-500">10+</div>
+                    <div class="text-gray-400 text-sm">Custom Zombies</div>
+                </div>
+                <div class="bg-black/40 border border-stn-900/30 rounded-lg p-4">
+                    <div class="text-3xl font-bold text-stn-500">15</div>
+                    <div class="text-gray-400 text-sm">Jockey Combos</div>
+                </div>
+                <div class="bg-black/40 border border-stn-900/30 rounded-lg p-4">
+                    <div class="text-3xl font-bold text-stn-500">10</div>
+                    <div class="text-gray-400 text-sm">Defense Blocks</div>
+                </div>
+                <div class="bg-black/40 border border-stn-900/30 rounded-lg p-4">
+                    <div class="text-3xl font-bold text-stn-500">6</div>
+                    <div class="text-gray-400 text-sm">Gamestage Tiers</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mod Ecosystem -->
+    <section id="mods" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="font-creepy text-5xl text-center text-stn-400 mb-4">The STN Ecosystem</h2>
+            <p class="text-center text-gray-400 mb-12 max-w-2xl mx-auto">
+                Five modular mods that work together. Install what you need, skip what you don't.
+            </p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- STN Core -->
+                <a href="stn-core.html" class="bg-black/40 border border-purple-900/30 rounded-xl p-6 card-hover block">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-4xl">🔌</span>
+                        <div>
+                            <h3 class="text-xl font-semibold text-purple-400">stn-core</h3>
+                            <span class="text-xs text-purple-300 bg-purple-900/30 px-2 py-0.5 rounded">REQUIRED</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">
+                        The foundation. Provides shared APIs, events, and configuration for all STN mods.
+                        Required by all other mods in the ecosystem.
+                    </p>
+                    <div class="text-purple-400 text-sm font-medium">Learn more →</div>
+                </a>
+
+                <!-- STN Survival -->
+                <a href="stn-survival.html" class="bg-black/40 border border-red-900/30 rounded-xl p-6 card-hover block">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-4xl">🌙</span>
+                        <div>
+                            <h3 class="text-xl font-semibold text-red-400">stn-survival</h3>
+                            <span class="text-xs text-red-300 bg-red-900/30 px-2 py-0.5 rounded">EVENTS</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">
+                        Survival Night events every 6 days. Hordes spawn in waves, gamestage progression,
+                        and difficulty scaling based on days survived.
+                    </p>
+                    <div class="text-red-400 text-sm font-medium">Learn more →</div>
+                </a>
+
+                <!-- STN Zombies -->
+                <a href="stn-zombies.html" class="bg-black/40 border border-green-900/30 rounded-xl p-6 card-hover block">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-4xl">🧟</span>
+                        <div>
+                            <h3 class="text-xl font-semibold text-green-400">stn-zombies</h3>
+                            <span class="text-xs text-green-300 bg-green-900/30 px-2 py-0.5 rounded">ENTITIES</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">
+                        10 custom zombie variants with unique abilities. Ferals, Sprinters, Demolishers,
+                        Screamers, and more. Full GeckoLib animations.
+                    </p>
+                    <div class="text-green-400 text-sm font-medium">Learn more →</div>
+                </a>
+
+                <!-- STN Fortifications -->
+                <a href="stn-fortifications.html" class="bg-black/40 border border-yellow-900/30 rounded-xl p-6 card-hover block">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-4xl">🏰</span>
+                        <div>
+                            <h3 class="text-xl font-semibold text-yellow-400">stn-fortifications</h3>
+                            <span class="text-xs text-yellow-300 bg-yellow-900/30 px-2 py-0.5 rounded">BLOCKS</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">
+                        Defensive blocks and durability system. Spike traps, barbed wire, electric fences,
+                        reinforced walls, and motion sensors.
+                    </p>
+                    <div class="text-yellow-400 text-sm font-medium">Learn more →</div>
+                </a>
+
+                <!-- STN Repair -->
+                <a href="stn-repair.html" class="bg-black/40 border border-cyan-900/30 rounded-xl p-6 card-hover block">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-4xl">🔨</span>
+                        <div>
+                            <h3 class="text-xl font-semibold text-cyan-400">stn-repair</h3>
+                            <span class="text-xs text-cyan-300 bg-cyan-900/30 px-2 py-0.5 rounded">TOOLS</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">
+                        Hammer tools for repairing damaged blocks. Five tiers from Wood to Netherite.
+                        HUD shows block durability when aiming.
+                    </p>
+                    <div class="text-cyan-400 text-sm font-medium">Learn more →</div>
+                </a>
+
+                <!-- Dependency Graph -->
+                <div class="bg-black/40 border border-gray-700 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-300 mb-4">Dependency Graph</h3>
+                    <pre class="text-xs text-gray-400 font-mono">
+        stn-core (required)
+             │
+   ┌─────────┼─────────┐
+   │         │         │
+   ▼         ▼         ▼
+survival  zombies  fortifications
+                       │
+                       ▼
+                    repair
+                    </pre>
+                    <p class="text-gray-500 text-xs mt-4">
+                        All mods require stn-core. stn-repair requires stn-fortifications.
+                        Other mods are independent.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Overview -->
+    <section id="features" class="py-20 px-4 bg-black/30">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="font-creepy text-5xl text-center text-stn-400 mb-4">Features</h2>
+            <p class="text-center text-gray-400 mb-12 max-w-2xl mx-auto">
+                Every 6 days, the Survival Night begins. Prepare your defenses or face the horde.
+            </p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-black/40 border border-stn-900/30 rounded-xl p-6">
+                    <div class="text-4xl mb-4">🌙</div>
+                    <h3 class="text-xl font-semibold text-stn-400 mb-2">Survival Night Events</h3>
+                    <p class="text-gray-400 text-sm">
+                        Every 6 days (~2 hours real time), massive hordes spawn in waves every 30 seconds,
+                        hunting players until dawn. Survive to increase your gamestage.
+                    </p>
+                </div>
+
+                <div class="bg-black/40 border border-stn-900/30 rounded-xl p-6">
+                    <div class="text-4xl mb-4">🧟</div>
+                    <h3 class="text-xl font-semibold text-stn-400 mb-2">10+ Zombie Variants</h3>
+                    <p class="text-gray-400 text-sm">
+                        Feral zombies run on all fours, Sprinters are lightning fast, Demolishers smash blocks,
+                        and Screamers summon reinforcements. Each with unique AI.
+                    </p>
+                </div>
+
+                <div class="bg-black/40 border border-stn-900/30 rounded-xl p-6">
+                    <div class="text-4xl mb-4">📈</div>
+                    <h3 class="text-xl font-semibold text-stn-400 mb-2">Gamestage Progression</h3>
+                    <p class="text-gray-400 text-sm">
+                        Difficulty scales with days survived, kills, and survival nights completed.
+                        Higher gamestage unlocks deadlier zombie variants.
+                    </p>
+                </div>
+
+                <div class="bg-black/40 border border-stn-900/30 rounded-xl p-6">
+                    <div class="text-4xl mb-4">🏰</div>
+                    <h3 class="text-xl font-semibold text-stn-400 mb-2">Fortification Blocks</h3>
+                    <p class="text-gray-400 text-sm">
+                        Spike traps, barbed wire, electric fences, and reinforced walls. All blocks have
+                        durability and show visual damage cracks.
+                    </p>
+                </div>
+
+                <div class="bg-black/40 border border-stn-900/30 rounded-xl p-6">
+                    <div class="text-4xl mb-4">🔨</div>
+                    <h3 class="text-xl font-semibold text-stn-400 mb-2">Block Durability & Repair</h3>
+                    <p class="text-gray-400 text-sm">
+                        All player-placed blocks have durability. Zombies damage blocks based on material.
+                        Repair with tiered hammers before they break!
+                    </p>
+                </div>
+
+                <div class="bg-black/40 border border-stn-900/30 rounded-xl p-6">
+                    <div class="text-4xl mb-4">👂</div>
+                    <h3 class="text-xl font-semibold text-stn-400 mb-2">Zombie Sensory System</h3>
+                    <p class="text-gray-400 text-sm">
+                        Zombies detect sounds (block breaking, doors, combat) and can smell players
+                        during Survival Night. Villages are fallback targets.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation -->
+    <section id="install" class="py-20 px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="font-creepy text-5xl text-center text-stn-400 mb-4">Installation</h2>
+            <p class="text-center text-gray-400 mb-12">
+                Get started with Survive The Night in minutes.
+            </p>
+
+            <!-- Requirements -->
+            <div class="bg-black/40 border border-stn-900/30 rounded-xl p-6 mb-8">
+                <h3 class="text-xl font-semibold text-stn-400 mb-4">Requirements</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 bg-stn-900/50 rounded-lg flex items-center justify-center text-stn-400">✓</span>
+                        <span class="text-gray-300">Minecraft 1.21</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 bg-stn-900/50 rounded-lg flex items-center justify-center text-stn-400">✓</span>
+                        <span class="text-gray-300">Fabric Loader 0.16.0+</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 bg-stn-900/50 rounded-lg flex items-center justify-center text-stn-400">✓</span>
+                        <span class="text-gray-300">Fabric API</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 bg-stn-900/50 rounded-lg flex items-center justify-center text-stn-400">✓</span>
+                        <span class="text-gray-300">GeckoLib 4.5+ (for stn-zombies)</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 bg-stn-900/50 rounded-lg flex items-center justify-center text-stn-400">✓</span>
+                        <span class="text-gray-300">Java 21</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Steps -->
+            <div class="space-y-4">
+                <div class="bg-black/40 border border-stn-900/30 rounded-xl p-6">
+                    <div class="flex items-start gap-4">
+                        <span class="w-10 h-10 bg-stn-600 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">1</span>
+                        <div>
+                            <h4 class="text-lg font-semibold text-gray-200 mb-2">Install Fabric Loader</h4>
+                            <p class="text-gray-400">
+                                Download from <a href="https://fabricmc.net/use/installer/" class="text-stn-400 hover:text-stn-300" target="_blank">fabricmc.net</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-black/40 border border-stn-900/30 rounded-xl p-6">
+                    <div class="flex items-start gap-4">
+                        <span class="w-10 h-10 bg-stn-600 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">2</span>
+                        <div>
+                            <h4 class="text-lg font-semibold text-gray-200 mb-2">Download STN Mods</h4>
+                            <p class="text-gray-400">
+                                Get <code class="bg-black/50 px-2 py-1 rounded text-stn-400">stn-core</code> (required) plus any feature mods you want
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-black/40 border border-stn-900/30 rounded-xl p-6">
+                    <div class="flex items-start gap-4">
+                        <span class="w-10 h-10 bg-stn-600 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">3</span>
+                        <div>
+                            <h4 class="text-lg font-semibold text-gray-200 mb-2">Add to Mods Folder</h4>
+                            <p class="text-gray-400">
+                                Place all .jar files in your <code class="bg-black/50 px-2 py-1 rounded text-stn-400">mods</code> folder
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-black/40 border border-stn-900/30 rounded-xl p-6">
+                    <div class="flex items-start gap-4">
+                        <span class="w-10 h-10 bg-stn-600 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">4</span>
+                        <div>
+                            <h4 class="text-lg font-semibold text-gray-200 mb-2">Launch and Survive</h4>
+                            <p class="text-gray-400">
+                                Start Minecraft with the Fabric profile. The first Survival Night comes on Day 6!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-4 border-t border-stn-900/30">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <span class="text-3xl">🌙</span>
+                <span class="font-creepy text-3xl text-stn-500 glow-green">Survive The Night</span>
+            </div>
+            <p class="text-gray-500 mb-4">
+                A Modular Minecraft 1.21 Fabric Mod Suite
+            </p>
+            <p class="text-gray-600 text-sm">
+                stn-core | stn-survival | stn-zombies | stn-fortifications | stn-repair
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scroll to top -->
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+            class="fixed bottom-8 right-8 w-12 h-12 bg-stn-600 hover:bg-stn-700 rounded-full flex items-center justify-center transition-colors shadow-lg shadow-stn-900/50">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+        </svg>
+    </button>
+</body>
+</html>

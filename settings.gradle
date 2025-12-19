@@ -9,7 +9,7 @@ pluginManagement {
 rootProject.name = 'survivethenight'
 
 include 'stn-core'
-include 'stn-bloodmoon'
+include 'stn-survival'
 include 'stn-zombies'
 include 'stn-fortifications'
 include 'stn-repair'

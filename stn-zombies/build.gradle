@@ -4,8 +4,8 @@ dependencies {
     // Depends on stn-core
     implementation project(':stn-core')
 
-    // Optional: stn-bloodmoon for blood moon scaling
-    compileOnly project(':stn-bloodmoon')
+    // Optional: stn-survival for survival night scaling
+    compileOnly project(':stn-survival')
 
     // GeckoLib for custom entity models
     modImplementation "software.bernie.geckolib:geckolib-fabric-1.21:${project.geckolib_version}"
