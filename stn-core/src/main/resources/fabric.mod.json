@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "stn_core",
+  "version": "${version}",
+  "name": "Survive The Night - Core",
+  "description": "Core API and utilities for the Survive The Night mod suite",
+  "authors": ["wecanbefit"],
+  "contact": {
+    "homepage": "https://github.com/wecanbefit/survivethenight",
+    "sources": "https://github.com/wecanbefit/survivethenight"
+  },
+  "license": "MIT",
+  "icon": "assets/stn_core/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.stn.core.STNCore"],
+    "client": ["com.stn.core.client.STNCoreClient"]
+  },
+  "mixins": [],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

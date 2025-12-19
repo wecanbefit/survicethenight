@@ -1,0 +1,23 @@
+archivesBaseName = "stn-zombies"
+
+dependencies {
+    // Depends on stn-core
+    implementation project(':stn-core')
+
+    // Optional: stn-bloodmoon for blood moon scaling
+    compileOnly project(':stn-bloodmoon')
+
+    // GeckoLib for custom entity models
+    modImplementation "software.bernie.geckolib:geckolib-fabric-1.21:${project.geckolib_version}"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}

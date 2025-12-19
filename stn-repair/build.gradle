@@ -1,0 +1,18 @@
+archivesBaseName = "stn-repair"
+
+dependencies {
+    // Depends on stn-core and stn-fortifications
+    implementation project(':stn-core')
+    implementation project(':stn-fortifications')
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}

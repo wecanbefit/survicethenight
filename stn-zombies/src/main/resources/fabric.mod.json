@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "stn_zombies",
+  "version": "${version}",
+  "name": "Survive The Night - Zombies",
+  "description": "Custom zombie entities, AI behaviors, and sensory detection systems",
+  "authors": ["wecanbefit"],
+  "contact": {
+    "homepage": "https://github.com/wecanbefit/survivethenight",
+    "sources": "https://github.com/wecanbefit/survivethenight"
+  },
+  "license": "MIT",
+  "icon": "assets/stn_zombies/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.stn.zombies.STNZombies"],
+    "client": ["com.stn.zombies.client.STNZombiesClient"]
+  },
+  "mixins": [
+    "stn_zombies.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21",
+    "java": ">=21",
+    "fabric-api": "*",
+    "stn_core": "*",
+    "geckolib": "*"
+  },
+  "suggests": {
+    "stn_bloodmoon": "*"
+  }
+}

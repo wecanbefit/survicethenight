@@ -1,0 +1,68 @@
+plugins {
+    id 'fabric-loom' version '1.8-SNAPSHOT' apply false
+    id 'maven-publish'
+}
+
+subprojects {
+    apply plugin: 'fabric-loom'
+    apply plugin: 'maven-publish'
+
+    version = project.stn_version
+    group = project.maven_group
+
+    repositories {
+        maven { url "https://maven.fabricmc.net/" }
+        maven { url "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/" }
+        maven { url "https://maven.shedaniel.me/" }
+        maven { url "https://maven.terraformersmc.com/releases/" }
+        mavenCentral()
+    }
+
+    dependencies {
+        minecraft "com.mojang:minecraft:${project.minecraft_version}"
+        mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+        modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+        modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    }
+
+    processResources {
+        inputs.property "version", project.version
+
+        filesMatching("fabric.mod.json") {
+            expand "version": project.version
+        }
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        it.options.release = 21
+    }
+
+    java {
+        withSourcesJar()
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    jar {
+        from("LICENSE") {
+            rename { "${it}_${project.archivesBaseName}" }
+        }
+    }
+
+    // Configure loom for split sources
+    loom {
+        splitEnvironmentSourceSets()
+
+        mods {
+            "${project.archivesBaseName}" {
+                sourceSet sourceSets.main
+                sourceSet sourceSets.client
+            }
+        }
+    }
+}
+
+// Task to build all mods
+task buildAll {
+    dependsOn subprojects.collect { it.tasks.build }
+}

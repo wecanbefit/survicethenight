@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "stn_bloodmoon",
+  "version": "${version}",
+  "name": "Survive The Night - Blood Moon",
+  "description": "Blood moon events, horde spawning, and gamestage progression",
+  "authors": ["wecanbefit"],
+  "contact": {
+    "homepage": "https://github.com/wecanbefit/survivethenight",
+    "sources": "https://github.com/wecanbefit/survivethenight"
+  },
+  "license": "MIT",
+  "icon": "assets/stn_bloodmoon/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.stn.bloodmoon.STNBloodmoon"],
+    "client": ["com.stn.bloodmoon.client.STNBloodmoonClient"]
+  },
+  "mixins": [
+    "stn_bloodmoon.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21",
+    "java": ">=21",
+    "fabric-api": "*",
+    "stn_core": "*"
+  }
+}

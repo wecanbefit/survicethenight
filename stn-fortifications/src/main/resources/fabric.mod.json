@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "stn_fortifications",
+  "version": "${version}",
+  "name": "Survive The Night - Fortifications",
+  "description": "Defensive blocks, spikes, electric fences, and block durability system",
+  "authors": ["wecanbefit"],
+  "contact": {
+    "homepage": "https://github.com/wecanbefit/survivethenight",
+    "sources": "https://github.com/wecanbefit/survivethenight"
+  },
+  "license": "MIT",
+  "icon": "assets/stn_fortifications/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.stn.fortifications.STNFortifications"],
+    "client": ["com.stn.fortifications.client.STNFortificationsClient"]
+  },
+  "mixins": [
+    "stn_fortifications.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21",
+    "java": ">=21",
+    "fabric-api": "*",
+    "stn_core": "*"
+  }
+}

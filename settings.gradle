@@ -1,0 +1,15 @@
+pluginManagement {
+    repositories {
+        maven { url "https://maven.fabricmc.net/" }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'survivethenight'
+
+include 'stn-core'
+include 'stn-bloodmoon'
+include 'stn-zombies'
+include 'stn-fortifications'
+include 'stn-repair'

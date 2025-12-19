@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "stn_repair",
+  "version": "${version}",
+  "name": "Survive The Night - Repair",
+  "description": "Hammer tools for repairing fortified blocks",
+  "authors": ["wecanbefit"],
+  "contact": {
+    "homepage": "https://github.com/wecanbefit/survivethenight",
+    "sources": "https://github.com/wecanbefit/survivethenight"
+  },
+  "license": "MIT",
+  "icon": "assets/stn_repair/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.stn.repair.STNRepair"],
+    "client": ["com.stn.repair.client.STNRepairClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21",
+    "java": ">=21",
+    "fabric-api": "*",
+    "stn_core": "*",
+    "stn_fortifications": "*"
+  }
+}

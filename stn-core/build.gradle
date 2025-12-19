@@ -1,0 +1,16 @@
+archivesBaseName = "stn-core"
+
+dependencies {
+    // Core has no mod dependencies - it's the base
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}
