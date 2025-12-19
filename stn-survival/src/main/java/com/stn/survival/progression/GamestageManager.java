@@ -12,8 +12,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -22,20 +20,17 @@ import java.util.UUID;
  */
 public class GamestageManager implements IGamestageProvider {
     private final MinecraftServer server;
-    private final Map<UUID, PlayerGamestage> playerGamestages = new HashMap<>();
-
-    private int worldGamestage = 0;
-    private long lastDayCheck = 0;
-    private int survivalNightsSurvived = 0;
+    private GamestageState state;
 
     public GamestageManager(MinecraftServer server) {
         this.server = server;
 
-        loadData();
+        // Load persistent state from world data
+        this.state = GamestageState.get(server);
 
         ServerLivingEntityEvents.AFTER_DEATH.register(this::onEntityDeath);
 
-        STNSurvival.LOGGER.info("Gamestage Manager initialized");
+        STNSurvival.LOGGER.info("Gamestage Manager initialized - World gamestage: {}", state.getWorldGamestage());
     }
 
     private void onEntityDeath(LivingEntity entity, net.minecraft.entity.damage.DamageSource source) {
@@ -47,6 +42,7 @@ public class GamestageManager implements IGamestageProvider {
             PlayerGamestage playerData = getOrCreatePlayerData(player);
             playerData.addZombieKill();
             recalculateWorldGamestage();
+            state.markDirty();
         }
     }
 
@@ -55,8 +51,8 @@ public class GamestageManager implements IGamestageProvider {
         if (overworld == null) return;
 
         long currentDay = overworld.getTimeOfDay() / 24000;
-        if (currentDay > lastDayCheck) {
-            lastDayCheck = currentDay;
+        if (currentDay > state.getLastDayCheck()) {
+            state.setLastDayCheck(currentDay);
             onNewDay(currentDay);
         }
     }
@@ -69,10 +65,11 @@ public class GamestageManager implements IGamestageProvider {
 
         recalculateWorldGamestage();
         checkGamestageMilestones();
+        state.markDirty();
     }
 
     public void onSurvivalNightSurvived() {
-        survivalNightsSurvived++;
+        state.setSurvivalNightsSurvived(state.getSurvivalNightsSurvived() + 1);
 
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
             PlayerGamestage playerData = getOrCreatePlayerData(player);
@@ -80,6 +77,7 @@ public class GamestageManager implements IGamestageProvider {
         }
 
         recalculateWorldGamestage();
+        state.markDirty();
 
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
             player.sendMessage(
@@ -94,6 +92,7 @@ public class GamestageManager implements IGamestageProvider {
         PlayerGamestage playerData = getOrCreatePlayerData(player);
         playerData.onDeath();
         recalculateWorldGamestage();
+        state.markDirty();
     }
 
     private void recalculateWorldGamestage() {
@@ -111,12 +110,13 @@ public class GamestageManager implements IGamestageProvider {
         }
 
         if (playerCount > 0) {
-            worldGamestage = totalGamestage / playerCount;
+            state.setWorldGamestage(totalGamestage / playerCount);
         }
     }
 
     private void checkGamestageMilestones() {
         int[] milestones = {11, 26, 51, 76, 100};
+        int worldGamestage = state.getWorldGamestage();
 
         for (int milestone : milestones) {
             if (worldGamestage >= milestone && worldGamestage < milestone + 5) {
@@ -144,20 +144,17 @@ public class GamestageManager implements IGamestageProvider {
     }
 
     public PlayerGamestage getOrCreatePlayerData(ServerPlayerEntity player) {
-        return playerGamestages.computeIfAbsent(
-            player.getUuid(),
-            uuid -> new PlayerGamestage(uuid, player.getName().getString())
-        );
+        return state.getOrCreatePlayerData(player.getUuid(), player.getName().getString());
     }
 
     @Override
     public int getWorldGamestage() {
-        return worldGamestage;
+        return state.getWorldGamestage();
     }
 
     public void setWorldGamestage(int value) {
-        this.worldGamestage = Math.max(0, Math.min(200, value));
-        STNSurvival.LOGGER.info("Gamestage manually set to {}", worldGamestage);
+        state.setWorldGamestage(Math.max(0, Math.min(200, value)));
+        STNSurvival.LOGGER.info("Gamestage manually set to {}", state.getWorldGamestage());
     }
 
     @Override
@@ -167,7 +164,7 @@ public class GamestageManager implements IGamestageProvider {
 
     @Override
     public int getPlayerGamestage(UUID playerId) {
-        PlayerGamestage data = playerGamestages.get(playerId);
+        PlayerGamestage data = state.getPlayerData().get(playerId);
         return data != null ? data.calculateGamestage() : 0;
     }
 
@@ -179,6 +176,7 @@ public class GamestageManager implements IGamestageProvider {
             data.addZombieKill();
         }
         recalculateWorldGamestage();
+        state.markDirty();
     }
 
     @Override
@@ -189,9 +187,11 @@ public class GamestageManager implements IGamestageProvider {
             data.onDeath();
         }
         recalculateWorldGamestage();
+        state.markDirty();
     }
 
     public boolean canSpawnZombieType(String zombieType) {
+        int worldGamestage = state.getWorldGamestage();
         return switch (zombieType) {
             case "feral" -> worldGamestage >= STNSurvivalConfig.GAMESTAGE_FERAL_THRESHOLD;
             case "sprinter" -> worldGamestage >= STNSurvivalConfig.GAMESTAGE_SPRINTER_THRESHOLD;
@@ -204,6 +204,7 @@ public class GamestageManager implements IGamestageProvider {
 
     @Override
     public float getHordeSizeMultiplier() {
+        int worldGamestage = state.getWorldGamestage();
         if (worldGamestage <= 10) return 1.0f;
         if (worldGamestage <= 25) return 1.25f;
         if (worldGamestage <= 50) return 1.5f;
@@ -213,17 +214,16 @@ public class GamestageManager implements IGamestageProvider {
     }
 
     public float getBlockBreakSpeedMultiplier() {
+        int worldGamestage = state.getWorldGamestage();
         if (worldGamestage < 50) return 1.0f;
         if (worldGamestage < 75) return 1.25f;
         if (worldGamestage < 100) return 1.5f;
         return 2.0f;
     }
 
-    private void loadData() {
-        STNSurvival.LOGGER.info("Loading gamestage data...");
-    }
-
     public void saveData() {
-        STNSurvival.LOGGER.info("Saving gamestage data...");
+        // Data is saved automatically by PersistentState when marked dirty
+        state.markDirty();
+        STNSurvival.LOGGER.info("Gamestage data marked for save");
     }
 }

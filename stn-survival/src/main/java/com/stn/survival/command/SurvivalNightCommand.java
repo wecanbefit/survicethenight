@@ -198,19 +198,21 @@ public class SurvivalNightCommand {
         source.sendFeedback(() -> Text.literal("Horde Multiplier: ").formatted(Formatting.GRAY)
             .append(Text.literal(String.format("%.1fx", hordeMultiplier)).formatted(Formatting.RED)), false);
 
-        // Show what's unlocked
-        source.sendFeedback(() -> Text.literal("Unlocked Zombies:").formatted(Formatting.GRAY), false);
+        // Only show unlocked zombies if stn-zombies mod is installed
+        if (net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("stn_zombies")) {
+            source.sendFeedback(() -> Text.literal("Unlocked Zombies:").formatted(Formatting.GRAY), false);
 
-        StringBuilder unlocked = new StringBuilder();
-        unlocked.append("Normal, Bloated");
-        if (gamestage.canSpawnZombieType("feral")) unlocked.append(", Feral");
-        if (gamestage.canSpawnZombieType("sprinter")) unlocked.append(", Sprinter");
-        if (gamestage.canSpawnZombieType("demolisher")) unlocked.append(", Demolisher");
-        if (gamestage.canSpawnZombieType("screamer")) unlocked.append(", Screamer");
-        if (gamestage.canSpawnZombieType("spider_jockey")) unlocked.append(", Spider Jockey");
+            StringBuilder unlocked = new StringBuilder();
+            unlocked.append("Normal, Bloated");
+            if (gamestage.canSpawnZombieType("feral")) unlocked.append(", Feral");
+            if (gamestage.canSpawnZombieType("sprinter")) unlocked.append(", Sprinter");
+            if (gamestage.canSpawnZombieType("demolisher")) unlocked.append(", Demolisher");
+            if (gamestage.canSpawnZombieType("screamer")) unlocked.append(", Screamer");
+            if (gamestage.canSpawnZombieType("spider_jockey")) unlocked.append(", Spider Jockey");
 
-        String unlockedStr = unlocked.toString();
-        source.sendFeedback(() -> Text.literal("  " + unlockedStr).formatted(Formatting.RED), false);
+            String unlockedStr = unlocked.toString();
+            source.sendFeedback(() -> Text.literal("  " + unlockedStr).formatted(Formatting.RED), false);
+        }
 
         return 1;
     }
