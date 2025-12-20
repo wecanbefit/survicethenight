@@ -1,0 +1,47 @@
+{
+  "credit": "Bloodmoon",
+  "textures": {
+    "particle": "#texture"
+  },
+  "elements": [
+    {
+      "name": "wire_top",
+      "from": [7, 13, 0],
+      "to": [9, 14, 6],
+      "faces": {
+        "north": {"uv": [0, 0, 2, 1], "texture": "#wire"},
+        "east": {"uv": [0, 0, 6, 1], "texture": "#wire"},
+        "south": {"uv": [0, 0, 2, 1], "texture": "#wire"},
+        "west": {"uv": [0, 0, 6, 1], "texture": "#wire"},
+        "up": {"uv": [0, 0, 2, 6], "texture": "#wire"},
+        "down": {"uv": [0, 0, 2, 6], "texture": "#wire"}
+      }
+    },
+    {
+      "name": "wire_middle",
+      "from": [7, 9, 0],
+      "to": [9, 10, 6],
+      "faces": {
+        "north": {"uv": [0, 4, 2, 5], "texture": "#wire"},
+        "east": {"uv": [0, 4, 6, 5], "texture": "#wire"},
+        "south": {"uv": [0, 4, 2, 5], "texture": "#wire"},
+        "west": {"uv": [0, 4, 6, 5], "texture": "#wire"},
+        "up": {"uv": [0, 0, 2, 6], "texture": "#wire"},
+        "down": {"uv": [0, 0, 2, 6], "texture": "#wire"}
+      }
+    },
+    {
+      "name": "wire_bottom",
+      "from": [7, 5, 0],
+      "to": [9, 6, 6],
+      "faces": {
+        "north": {"uv": [0, 8, 2, 9], "texture": "#wire"},
+        "east": {"uv": [0, 8, 6, 9], "texture": "#wire"},
+        "south": {"uv": [0, 8, 2, 9], "texture": "#wire"},
+        "west": {"uv": [0, 8, 6, 9], "texture": "#wire"},
+        "up": {"uv": [0, 0, 2, 6], "texture": "#wire"},
+        "down": {"uv": [0, 0, 2, 6], "texture": "#wire"}
+      }
+    }
+  ]
+}
