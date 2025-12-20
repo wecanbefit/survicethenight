@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.stn.mobai.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "PlayerMovementMixin",
+    "ExplosionMixin"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

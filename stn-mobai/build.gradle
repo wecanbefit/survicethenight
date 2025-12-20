@@ -1,0 +1,24 @@
+archivesBaseName = "stn-mobai"
+
+loom {
+    accessWidenerPath = file("src/main/resources/stn_mobai.accesswidener")
+}
+
+dependencies {
+    // Depends on stn-core for ISoundEmitter interface
+    implementation project(':stn-core')
+
+    // Optional: stn-survival for survival night detection
+    compileOnly project(':stn-survival')
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}
