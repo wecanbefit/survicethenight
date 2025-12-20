@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "stn_fortifications:block/reinforced/reinforced_iron"
+    }
+  }
+}

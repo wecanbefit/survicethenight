@@ -1,0 +1,23 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "front": "stn_fortifications:block/motion_sensor_on",
+    "side": "stn_fortifications:block/motion_sensor_side",
+    "particle": "stn_fortifications:block/motion_sensor_side"
+  },
+  "elements": [
+    {
+      "name": "sensor_body",
+      "from": [4, 4, 14],
+      "to": [12, 12, 16],
+      "faces": {
+        "north": { "uv": [4, 4, 12, 12], "texture": "#front" },
+        "south": { "uv": [4, 4, 12, 12], "texture": "#side" },
+        "east": { "uv": [0, 4, 2, 12], "texture": "#side" },
+        "west": { "uv": [14, 4, 16, 12], "texture": "#side" },
+        "up": { "uv": [4, 0, 12, 2], "texture": "#side" },
+        "down": { "uv": [4, 14, 12, 16], "texture": "#side" }
+      }
+    }
+  ]
+}

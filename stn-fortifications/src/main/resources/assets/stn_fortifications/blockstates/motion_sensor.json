@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north,powered=false,waterlogged=false": { "model": "stn_fortifications:block/motion_sensor" },
+    "facing=north,powered=false,waterlogged=true": { "model": "stn_fortifications:block/motion_sensor" },
+    "facing=north,powered=true,waterlogged=false": { "model": "stn_fortifications:block/motion_sensor_on" },
+    "facing=north,powered=true,waterlogged=true": { "model": "stn_fortifications:block/motion_sensor_on" },
+    "facing=south,powered=false,waterlogged=false": { "model": "stn_fortifications:block/motion_sensor", "y": 180 },
+    "facing=south,powered=false,waterlogged=true": { "model": "stn_fortifications:block/motion_sensor", "y": 180 },
+    "facing=south,powered=true,waterlogged=false": { "model": "stn_fortifications:block/motion_sensor_on", "y": 180 },
+    "facing=south,powered=true,waterlogged=true": { "model": "stn_fortifications:block/motion_sensor_on", "y": 180 },
+    "facing=east,powered=false,waterlogged=false": { "model": "stn_fortifications:block/motion_sensor", "y": 90 },
+    "facing=east,powered=false,waterlogged=true": { "model": "stn_fortifications:block/motion_sensor", "y": 90 },
+    "facing=east,powered=true,waterlogged=false": { "model": "stn_fortifications:block/motion_sensor_on", "y": 90 },
+    "facing=east,powered=true,waterlogged=true": { "model": "stn_fortifications:block/motion_sensor_on", "y": 90 },
+    "facing=west,powered=false,waterlogged=false": { "model": "stn_fortifications:block/motion_sensor", "y": 270 },
+    "facing=west,powered=false,waterlogged=true": { "model": "stn_fortifications:block/motion_sensor", "y": 270 },
+    "facing=west,powered=true,waterlogged=false": { "model": "stn_fortifications:block/motion_sensor_on", "y": 270 },
+    "facing=west,powered=true,waterlogged=true": { "model": "stn_fortifications:block/motion_sensor_on", "y": 270 }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "parent": "stn_fortifications:block/parent/wired_fence_side",
+  "textures": {
+    "particle": "stn_fortifications:block/electric_fence_post",
+    "texture": "stn_fortifications:block/electric_fence_post",
+    "wire": "stn_fortifications:block/electric_fence_wire_powered"
+  }
+}

@@ -1,0 +1,135 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "west": "false",
+        "south": "false"
+      },
+      "apply": {
+        "model": "stn_fortifications:block/electric_fence/electric_fence_post"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "stn_fortifications:block/electric_fence/electric_fence_post"
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "stn_fortifications:block/electric_fence/electric_fence_post",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "stn_fortifications:block/electric_fence/electric_fence_post"
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "stn_fortifications:block/electric_fence/electric_fence_post",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "stn_fortifications:block/electric_fence/electric_fence_side",
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "stn_fortifications:block/electric_fence/electric_fence_side",
+        "y": 90,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "stn_fortifications:block/electric_fence/electric_fence_side",
+        "y": 180,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "stn_fortifications:block/electric_fence/electric_fence_side",
+        "y": 270,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "stn_fortifications:block/electric_fence/electric_fence_side_powered",
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "stn_fortifications:block/electric_fence/electric_fence_side_powered",
+        "y": 90,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "stn_fortifications:block/electric_fence/electric_fence_side_powered",
+        "y": 180,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "stn_fortifications:block/electric_fence/electric_fence_side_powered",
+        "y": 270,
+        "uvlock": false
+      }
+    }
+  ]
+}
