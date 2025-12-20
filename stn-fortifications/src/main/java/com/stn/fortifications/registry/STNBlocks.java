@@ -6,14 +6,21 @@ import com.stn.fortifications.block.ElectricFenceBlock;
 import com.stn.fortifications.block.MotionSensorBlock;
 import com.stn.fortifications.block.ReinforcedBlock;
 import com.stn.fortifications.block.SpikeBlock;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 /**
@@ -150,9 +157,42 @@ public class STNBlocks {
         return registeredBlock;
     }
 
+    // Creative Tab (defined after blocks to avoid forward reference)
+    public static final RegistryKey<ItemGroup> FORTIFICATIONS_GROUP_KEY = RegistryKey.of(
+        RegistryKeys.ITEM_GROUP,
+        Identifier.of(STNFortifications.MOD_ID, "fortifications")
+    );
+
+    public static final ItemGroup FORTIFICATIONS_GROUP = FabricItemGroup.builder()
+        .icon(() -> new ItemStack(BARBED_WIRE))
+        .displayName(Text.translatable("itemGroup.stn_fortifications.fortifications"))
+        .build();
+
     public static void register() {
         STNFortifications.LOGGER.info("Registering STN Fortifications blocks...");
-        // Blocks are registered via static initialization
+
+        // Register the creative tab
+        Registry.register(Registries.ITEM_GROUP, FORTIFICATIONS_GROUP_KEY, FORTIFICATIONS_GROUP);
+
+        // Add blocks to creative tab
+        ItemGroupEvents.modifyEntriesEvent(FORTIFICATIONS_GROUP_KEY).register(content -> {
+            // Spikes
+            content.add(WOODEN_SPIKES);
+            content.add(IRON_SPIKES);
+            content.add(REINFORCED_SPIKES);
+
+            // Reinforced walls
+            content.add(REINFORCED_WOOD);
+            content.add(REINFORCED_COBBLESTONE);
+            content.add(REINFORCED_IRON);
+            content.add(STEEL_BLOCK);
+
+            // Advanced defenses
+            content.add(BARBED_WIRE);
+            content.add(ELECTRIC_FENCE);
+            content.add(MOTION_SENSOR);
+        });
+
         STNFortifications.LOGGER.info("STN Fortifications blocks registered!");
     }
 }

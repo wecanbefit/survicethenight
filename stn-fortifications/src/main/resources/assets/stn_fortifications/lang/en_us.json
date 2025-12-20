@@ -1,0 +1,16 @@
+{
+  "itemGroup.stn_fortifications.fortifications": "Survive The Night: Fortifications",
+
+  "block.stn_fortifications.wooden_spikes": "Wooden Spikes",
+  "block.stn_fortifications.iron_spikes": "Iron Spikes",
+  "block.stn_fortifications.reinforced_spikes": "Reinforced Spikes",
+
+  "block.stn_fortifications.reinforced_wood": "Reinforced Wood",
+  "block.stn_fortifications.reinforced_cobblestone": "Reinforced Cobblestone",
+  "block.stn_fortifications.reinforced_iron": "Reinforced Iron",
+  "block.stn_fortifications.steel_block": "Steel Block",
+
+  "block.stn_fortifications.barbed_wire": "Barbed Wire",
+  "block.stn_fortifications.electric_fence": "Electric Fence",
+  "block.stn_fortifications.motion_sensor": "Motion Sensor"
+}
