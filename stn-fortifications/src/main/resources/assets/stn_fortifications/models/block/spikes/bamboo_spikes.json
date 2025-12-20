@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "stn_fortifications:block/bamboo_spikes"
+  }
+}

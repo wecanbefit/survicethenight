@@ -30,6 +30,17 @@ import net.minecraft.util.Identifier;
 public class STNBlocks {
 
     // Spike Blocks
+    public static final Block BAMBOO_SPIKES = registerBlock("bamboo_spikes",
+        new SpikeBlock(
+            AbstractBlock.Settings.create()
+                .mapColor(MapColor.PALE_GREEN)
+                .strength(0.5f, 1.0f)
+                .sounds(BlockSoundGroup.BAMBOO)
+                .nonOpaque(),
+            1.0f,  // damage - lowest
+            25     // durability hits - very weak
+        ));
+
     public static final Block WOODEN_SPIKES = registerBlock("wooden_spikes",
         new SpikeBlock(
             AbstractBlock.Settings.create()
@@ -177,6 +188,7 @@ public class STNBlocks {
         // Add blocks to creative tab
         ItemGroupEvents.modifyEntriesEvent(FORTIFICATIONS_GROUP_KEY).register(content -> {
             // Spikes
+            content.add(BAMBOO_SPIKES);
             content.add(WOODEN_SPIKES);
             content.add(IRON_SPIKES);
             content.add(REINFORCED_SPIKES);

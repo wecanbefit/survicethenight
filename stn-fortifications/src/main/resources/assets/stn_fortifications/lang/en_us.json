@@ -1,6 +1,7 @@
 {
   "itemGroup.stn_fortifications.fortifications": "Survive The Night: Fortifications",
 
+  "block.stn_fortifications.bamboo_spikes": "Bamboo Spikes",
   "block.stn_fortifications.wooden_spikes": "Wooden Spikes",
   "block.stn_fortifications.iron_spikes": "Iron Spikes",
   "block.stn_fortifications.reinforced_spikes": "Reinforced Spikes",
