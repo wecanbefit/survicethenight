@@ -1,6 +1,7 @@
 package com.stn.fortifications;
 
 import com.stn.core.STNCore;
+import com.stn.fortifications.registry.STNBlocks;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +18,8 @@ public class STNFortifications implements ModInitializer {
     public void onInitialize() {
         LOGGER.info("Survive The Night - Fortifications initializing...");
 
-        // TODO: Load configuration
-        // TODO: Register blocks and items
-        // TODO: Register networking
-        // TODO: Set up durability manager
+        // Register blocks and items
+        STNBlocks.register();
 
         LOGGER.info("Survive The Night - Fortifications initialized!");
     }
