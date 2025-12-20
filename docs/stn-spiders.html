@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STN Spiders - Survive The Night</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@300;400;500;600;700&display=swap');
+        .font-creepy { font-family: 'Creepster', cursive; }
+        .bg-gradient-night { background: linear-gradient(135deg, #1a0505 0%, #2e0a0a 50%, #1a0505 100%); }
+    </style>
+</head>
+<body class="bg-gradient-night min-h-screen text-gray-100 font-['Inter']">
+    <nav class="fixed top-0 w-full bg-black/80 backdrop-blur-md z-50 border-b border-red-900/50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-3xl">🌙</span>
+                <span class="font-creepy text-2xl text-red-500">STN</span>
+                <span class="text-gray-400">/</span>
+                <span class="text-red-400 font-semibold">spiders</span>
+            </a>
+            <a href="index.html" class="text-gray-300 hover:text-red-400">Home</a>
+        </div>
+    </nav>
+
+    <header class="pt-32 pb-16 px-4 text-center">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-6xl mb-4">🕷️</div>
+            <h1 class="font-creepy text-6xl text-red-500 mb-4">stn-spiders</h1>
+            <p class="text-xl text-gray-300 mb-2">Cave Navigation Specialists</p>
+            <p class="text-gray-400">6 spider variants with ambush, control, and mobility tactics.</p>
+            <div class="mt-6 flex justify-center gap-2 flex-wrap">
+                <span class="px-3 py-1 bg-red-900/50 text-red-400 rounded-full text-sm">Depends: stn-core, stn-mobai</span>
+                <span class="px-3 py-1 bg-red-900/50 text-red-400 rounded-full text-sm">Optional: stn-survival</span>
+                <span class="px-3 py-1 bg-purple-900/50 text-purple-400 rounded-full text-sm">1 Mini-Boss</span>
+            </div>
+        </div>
+    </header>
+
+    <section class="py-16 px-4">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-red-400 mb-8">Spider Variants</h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Stalker -->
+                <div class="bg-black/40 border border-red-900/30 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-3xl">👁️</div>
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded">0.9x Scale</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-red-400">Stalker Spider</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 15+ | Weight: 10 | Ambush</p>
+                    <p class="text-gray-400 text-sm mb-3">Semi-invisible while stationary in darkness (light &lt;7). First hit deals +4 bonus damage.</p>
+                    <div class="text-xs text-gray-500">HP: 16 | Speed: 0.32 | Damage: 3 (+4 ambush)</div>
+                </div>
+
+                <!-- Leaper -->
+                <div class="bg-black/40 border border-red-900/30 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-3xl">🦘</div>
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded">1.0x Scale</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-red-400">Leaper Spider</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 20+ | Weight: 10 | Burst Mobility</p>
+                    <p class="text-gray-400 text-sm mb-3">Extended leap distance. Prioritizes elevated targets. Breaks pillaring and rooftop safety.</p>
+                    <div class="text-xs text-gray-500">HP: 16 | Speed: 0.35 | Damage: 3 | Leap: 10 blocks</div>
+                </div>
+
+                <!-- Webspinner -->
+                <div class="bg-black/40 border border-red-900/30 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-3xl">🕸️</div>
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded">1.1x Scale</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-red-400">Webspinner Spider</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 25+ | Weight: 8 | Control</p>
+                    <p class="text-gray-400 text-sm mb-3">Places cobwebs on hit. Applies slowness. Locks players in place for follow-up attacks.</p>
+                    <div class="text-xs text-gray-500">HP: 18 | Speed: 0.28 | Damage: 2 + slowness</div>
+                </div>
+
+                <!-- Venom -->
+                <div class="bg-black/40 border border-red-900/30 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-3xl">☣️</div>
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded">1.15x Scale</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-red-400">Venom Spider</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 30+ | Weight: 8 | Damage Over Time</p>
+                    <p class="text-gray-400 text-sm mb-3">Stacking poison. Each hit adds +2 seconds to poison duration. Encourages disengagement and potion use.</p>
+                    <div class="text-xs text-gray-500">HP: 18 | Speed: 0.3 | Damage: 2 + poison</div>
+                </div>
+
+                <!-- Burden -->
+                <div class="bg-black/40 border border-red-900/30 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-3xl">🛡️</div>
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded">1.4x Scale</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-red-400">Burden Spider</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 50+ | Weight: 5 | Debuffer/Tank</p>
+                    <p class="text-gray-400 text-sm mb-3">Heavily armored, slow movement. Applies weakness and mining fatigue. Makes escape and counterattacks harder.</p>
+                    <div class="text-xs text-gray-500">HP: 40 | Speed: 0.22 | Damage: 4 | Armor: 8</div>
+                </div>
+
+                <!-- Broodmother -->
+                <div class="bg-black/40 border border-red-900/30 rounded-xl p-6 ring-2 ring-purple-500/30">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-3xl">👑</div>
+                        <span class="text-xs bg-purple-600 px-2 py-1 rounded">1.6x Scale BOSS</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-purple-400">Broodmother Spider</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 75+ | Weight: 3 | Summoner Mini-Boss</p>
+                    <p class="text-gray-400 text-sm mb-3">Spawns cave spiders every 10 seconds (max 6). High health, slow. Spawns 3 more on death. Attrition battle.</p>
+                    <div class="text-xs text-gray-500">HP: 60 | Speed: 0.2 | Damage: 4 | Armor: 4</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 px-4">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-red-400 mb-8">Spawn Weights Explained</h2>
+            <div class="bg-black/40 border border-red-900/30 rounded-xl p-6">
+                <p class="text-gray-400 mb-4">Higher weight = more common. Weights are used for weighted random selection:</p>
+                <div class="grid md:grid-cols-2 gap-4 text-sm">
+                    <div class="bg-black/30 rounded-lg p-3">
+                        <div class="text-red-400 mb-1">Early Game (Stage 15-25)</div>
+                        <p class="text-gray-500">Stalker, Leaper, Webspinner dominate spawns</p>
+                    </div>
+                    <div class="bg-black/30 rounded-lg p-3">
+                        <div class="text-red-400 mb-1">Late Game (Stage 50+)</div>
+                        <p class="text-gray-500">Burden becomes common, Broodmother is rare</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 px-4 border-t border-red-900/30 text-center">
+        <a href="index.html" class="text-red-400 hover:text-red-300">Back to STN Home</a>
+    </footer>
+</body>
+</html>

@@ -1,10 +1,10 @@
-archivesBaseName = "stn-zombies"
+archivesBaseName = "stn-skeletons"
 
 dependencies {
     // Depends on stn-core for shared interfaces
     implementation project(':stn-core')
 
-    // Depends on stn-mobai for AI goals (BreakBlockGoal, etc.)
+    // Depends on stn-mobai for AI goals
     implementation project(':stn-mobai')
 
     // Depends on stn-survival for horde mob registration

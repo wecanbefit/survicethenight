@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "id": "stn_zombies",
+  "id": "stn_spiders",
   "version": "1.0.0",
-  "name": "STN Zombies",
-  "description": "Zombie variants for Survive The Night",
+  "name": "STN Spiders",
+  "description": "Spider variants for Survive The Night",
   "authors": ["STN Team"],
   "contact": {},
   "license": "All Rights Reserved",
-  "icon": "assets/stn_zombies/icon.png",
+  "icon": "assets/stn_spiders/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": ["com.stn.zombies.STNZombies"],
-    "client": ["com.stn.zombies.client.STNZombiesClient"]
+    "main": ["com.stn.spiders.STNSpiders"],
+    "client": ["com.stn.spiders.client.STNSpidersClient"]
   },
   "depends": {
     "fabricloader": ">=0.15.0",

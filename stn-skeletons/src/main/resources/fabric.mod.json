@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "id": "stn_zombies",
+  "id": "stn_skeletons",
   "version": "1.0.0",
-  "name": "STN Zombies",
-  "description": "Zombie variants for Survive The Night",
+  "name": "STN Skeletons",
+  "description": "Skeleton variants for Survive The Night",
   "authors": ["STN Team"],
   "contact": {},
   "license": "All Rights Reserved",
-  "icon": "assets/stn_zombies/icon.png",
+  "icon": "assets/stn_skeletons/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": ["com.stn.zombies.STNZombies"],
-    "client": ["com.stn.zombies.client.STNZombiesClient"]
+    "main": ["com.stn.skeletons.STNSkeletons"],
+    "client": ["com.stn.skeletons.client.STNSkeletonsClient"]
   },
   "depends": {
     "fabricloader": ">=0.15.0",

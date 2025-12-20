@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STN Skeletons - Survive The Night</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@300;400;500;600;700&display=swap');
+        .font-creepy { font-family: 'Creepster', cursive; }
+        .bg-gradient-night { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%); }
+    </style>
+</head>
+<body class="bg-gradient-night min-h-screen text-gray-100 font-['Inter']">
+    <nav class="fixed top-0 w-full bg-black/80 backdrop-blur-md z-50 border-b border-gray-700/50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-3xl">🌙</span>
+                <span class="font-creepy text-2xl text-gray-300">STN</span>
+                <span class="text-gray-400">/</span>
+                <span class="text-gray-200 font-semibold">skeletons</span>
+            </a>
+            <a href="index.html" class="text-gray-300 hover:text-gray-100">Home</a>
+        </div>
+    </nav>
+
+    <header class="pt-32 pb-16 px-4 text-center">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-6xl mb-4">💀</div>
+            <h1 class="font-creepy text-6xl text-gray-300 mb-4">stn-skeletons</h1>
+            <p class="text-xl text-gray-300 mb-2">Bow Skeletons & Black Skeletons</p>
+            <p class="text-gray-400">6 skeleton variants with precision ranged and aggressive melee roles.</p>
+            <div class="mt-6 flex justify-center gap-2 flex-wrap">
+                <span class="px-3 py-1 bg-gray-700/50 text-gray-300 rounded-full text-sm">Depends: stn-core, stn-mobai</span>
+                <span class="px-3 py-1 bg-gray-700/50 text-gray-300 rounded-full text-sm">Optional: stn-survival</span>
+            </div>
+        </div>
+    </header>
+
+    <section class="py-16 px-4">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-gray-300 mb-4">Bow Skeletons</h2>
+            <p class="text-center text-gray-400 mb-8">Ranged specialists using regular skeleton models</p>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-16">
+                <!-- Suppressor -->
+                <div class="bg-black/40 border border-gray-700/30 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-3xl">🏹</div>
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded">1.0x Scale</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-200">Suppressor</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 15+ | Weight: 10 | Area Control</p>
+                    <p class="text-gray-400 text-sm mb-3">Fast fire rate. Arrows apply slowness. Forces players out of cover and into bad positions.</p>
+                    <div class="text-xs text-gray-500">HP: 20 | Speed: 0.23 | Arrow Damage: 3</div>
+                </div>
+
+                <!-- Marksman -->
+                <div class="bg-black/40 border border-gray-700/30 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-3xl">🎯</div>
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded">1.0x Scale</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-200">Marksman</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 20+ | Weight: 8 | Precision Ranged</p>
+                    <p class="text-gray-400 text-sm mb-3">Perfect accuracy, high damage, slow fire rate. Punishes peeking and stationary players.</p>
+                    <div class="text-xs text-gray-500">HP: 20 | Speed: 0.23 | Arrow Damage: 8</div>
+                </div>
+
+                <!-- Flame Archer -->
+                <div class="bg-black/40 border border-gray-700/30 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-3xl">🔥</div>
+                        <span class="text-xs bg-orange-600 px-2 py-1 rounded">Fire Immune</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-200">Flame Archer</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 30+ | Weight: 8 | Damage Over Time</p>
+                    <p class="text-gray-400 text-sm mb-3">Flaming arrows ignite targets for 5 seconds. Strong night threat and pressure against armor.</p>
+                    <div class="text-xs text-gray-500">HP: 20 | Speed: 0.23 | Arrow Damage: 4 + fire</div>
+                </div>
+            </div>
+
+            <h2 class="font-creepy text-4xl text-center text-gray-300 mb-4">Black Skeletons</h2>
+            <p class="text-center text-gray-400 mb-8">Aggressive melee using wither skeleton models</p>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Duelist -->
+                <div class="bg-black/40 border border-gray-700/30 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-3xl">⚔️</div>
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded">1.0x Scale</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-200">Duelist</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 35+ | Weight: 6 | Aggressive Melee</p>
+                    <p class="text-gray-400 text-sm mb-3">Fast movement and attacks. Short dash toward targets. Punishes backpedaling and poor spacing.</p>
+                    <div class="text-xs text-gray-500">HP: 22 | Speed: 0.32 | Damage: 5</div>
+                </div>
+
+                <!-- Vanguard -->
+                <div class="bg-black/40 border border-gray-700/30 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-3xl">🗡️</div>
+                        <span class="text-xs bg-purple-600 px-2 py-1 rounded">1.25x Scale</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-200">Vanguard</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 40+ | Weight: 6 | Frontline Tank</p>
+                    <p class="text-gray-400 text-sm mb-3">High health and knockback resistance. Heavy sword attacks, slow swing speed. Breaks shields and holds choke points.</p>
+                    <div class="text-xs text-gray-500">HP: 40 | Speed: 0.2 | Damage: 8 | 0.6 KB resist</div>
+                </div>
+
+                <!-- Reaper -->
+                <div class="bg-black/40 border border-gray-700/30 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-3xl">☠️</div>
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded">1.0x Scale</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-200">Reaper</h3>
+                    <p class="text-gray-500 text-sm mb-2">Gamestage 60+ | Weight: 4 | Executioner</p>
+                    <p class="text-gray-400 text-sm mb-3">2x damage to low HP targets (&lt;30%). Speed boost after kills. Finisher that escalates fights quickly.</p>
+                    <div class="text-xs text-gray-500">HP: 25 | Speed: 0.26 | Damage: 5 (10 on execute)</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 px-4 bg-black/30">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-creepy text-4xl text-center text-gray-300 mb-8">Gamestage Progression</h2>
+            <div class="bg-black/40 border border-gray-700/30 rounded-xl p-6">
+                <div class="space-y-3">
+                    <div class="flex items-center gap-4 pb-2 border-b border-gray-700/30">
+                        <span class="text-gray-300 font-mono w-24">Stage 15</span>
+                        <span class="text-gray-400">Suppressor starts rapid-firing</span>
+                    </div>
+                    <div class="flex items-center gap-4 pb-2 border-b border-gray-700/30">
+                        <span class="text-gray-300 font-mono w-24">Stage 20</span>
+                        <span class="text-gray-400">Marksman sniper threat</span>
+                    </div>
+                    <div class="flex items-center gap-4 pb-2 border-b border-gray-700/30">
+                        <span class="text-gray-300 font-mono w-24">Stage 30</span>
+                        <span class="text-gray-400">Flame Archer adds burn pressure</span>
+                    </div>
+                    <div class="flex items-center gap-4 pb-2 border-b border-gray-700/30">
+                        <span class="text-gray-300 font-mono w-24">Stage 35</span>
+                        <span class="text-gray-400">Duelist brings aggressive melee</span>
+                    </div>
+                    <div class="flex items-center gap-4 pb-2 border-b border-gray-700/30">
+                        <span class="text-gray-300 font-mono w-24">Stage 40</span>
+                        <span class="text-gray-400">Vanguard holds the line</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="text-gray-300 font-mono w-24">Stage 60+</span>
+                        <span class="text-gray-400">Reaper executes the wounded</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 px-4 border-t border-gray-700/30 text-center">
+        <a href="index.html" class="text-gray-300 hover:text-gray-100">Back to STN Home</a>
+    </footer>
+</body>
+</html>
