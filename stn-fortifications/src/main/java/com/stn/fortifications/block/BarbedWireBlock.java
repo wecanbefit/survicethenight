@@ -2,6 +2,7 @@ package com.stn.fortifications.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.FenceGateBlock;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.Waterloggable;
 import net.minecraft.entity.Entity;
@@ -69,8 +70,10 @@ public class BarbedWireBlock extends Block implements Waterloggable {
         builder.add(NORTH, SOUTH, EAST, WEST, WATERLOGGED, DAMAGE_COUNT);
     }
 
-    private boolean canConnect(BlockState state) {
-        return state.getBlock() instanceof BarbedWireBlock || state.isSideSolidFullSquare(null, null, Direction.UP);
+    private boolean canConnect(BlockState state, BlockView world, BlockPos pos) {
+        return state.getBlock() instanceof BarbedWireBlock ||
+               state.getBlock() instanceof FenceGateBlock ||
+               state.isSolidBlock(world, pos);
     }
 
     @Override
@@ -85,10 +88,10 @@ public class BarbedWireBlock extends Block implements Waterloggable {
         BlockState westState = world.getBlockState(pos.west());
 
         return getDefaultState()
-            .with(NORTH, northState.getBlock() instanceof BarbedWireBlock || northState.isSolidBlock(world, pos.north()))
-            .with(SOUTH, southState.getBlock() instanceof BarbedWireBlock || southState.isSolidBlock(world, pos.south()))
-            .with(EAST, eastState.getBlock() instanceof BarbedWireBlock || eastState.isSolidBlock(world, pos.east()))
-            .with(WEST, westState.getBlock() instanceof BarbedWireBlock || westState.isSolidBlock(world, pos.west()))
+            .with(NORTH, canConnect(northState, world, pos.north()))
+            .with(SOUTH, canConnect(southState, world, pos.south()))
+            .with(EAST, canConnect(eastState, world, pos.east()))
+            .with(WEST, canConnect(westState, world, pos.west()))
             .with(WATERLOGGED, fluidState.getFluid() == Fluids.WATER);
     }
 
@@ -100,8 +103,7 @@ public class BarbedWireBlock extends Block implements Waterloggable {
         }
 
         if (direction.getAxis().isHorizontal()) {
-            boolean shouldConnect = neighborState.getBlock() instanceof BarbedWireBlock ||
-                neighborState.isSolidBlock((BlockView) world, neighborPos);
+            boolean shouldConnect = canConnect(neighborState, (BlockView) world, neighborPos);
 
             return switch (direction) {
                 case NORTH -> state.with(NORTH, shouldConnect);

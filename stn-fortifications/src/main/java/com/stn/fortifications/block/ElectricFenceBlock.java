@@ -2,6 +2,7 @@ package com.stn.fortifications.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.FenceGateBlock;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.Waterloggable;
 import net.minecraft.entity.Entity;
@@ -106,7 +107,9 @@ public class ElectricFenceBlock extends Block implements Waterloggable {
     }
 
     private boolean canConnect(BlockState state, BlockView world, BlockPos pos) {
-        return state.getBlock() instanceof ElectricFenceBlock || state.isSolidBlock(world, pos);
+        return state.getBlock() instanceof ElectricFenceBlock ||
+               state.getBlock() instanceof FenceGateBlock ||
+               state.isSolidBlock(world, pos);
     }
 
     @Override
