@@ -5,6 +5,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 
 /**
@@ -35,13 +36,15 @@ public class WindupAttackGoal extends MeleeAttackGoal {
                 }
 
                 // Visual/audio cue for windup
-                this.mob.getWorld().addParticle(
-                    ParticleTypes.ANGRY_VILLAGER,
-                    this.mob.getX(),
-                    this.mob.getY() + 2.0,
-                    this.mob.getZ(),
-                    0, 0, 0
-                );
+                if (this.mob.getWorld() instanceof ServerWorld sw) {
+                    sw.spawnParticles(
+                        ParticleTypes.ANGRY_VILLAGER,
+                        this.mob.getX(),
+                        this.mob.getY() + 2.0,
+                        this.mob.getZ(),
+                        1, 0, 0, 0, 0
+                    );
+                }
             }
         }
     }
@@ -54,13 +57,13 @@ public class WindupAttackGoal extends MeleeAttackGoal {
             currentWindup--;
 
             // Shake/telegraph during windup
-            if (currentWindup % 4 == 0) {
-                this.mob.getWorld().addParticle(
+            if (currentWindup % 4 == 0 && this.mob.getWorld() instanceof ServerWorld sw) {
+                sw.spawnParticles(
                     ParticleTypes.CRIT,
-                    this.mob.getX() + this.mob.getRandom().nextGaussian() * 0.3,
+                    this.mob.getX(),
                     this.mob.getY() + 1.5,
-                    this.mob.getZ() + this.mob.getRandom().nextGaussian() * 0.3,
-                    0, 0, 0
+                    this.mob.getZ(),
+                    1, 0.3, 0.3, 0.3, 0
                 );
             }
 
@@ -73,21 +76,21 @@ public class WindupAttackGoal extends MeleeAttackGoal {
                 }
 
                 LivingEntity target = this.mob.getTarget();
-                if (target != null && this.mob.squaredDistanceTo(target) < 4.0) {
+                if (target != null && this.mob.squaredDistanceTo(target) < 4.0 && this.mob.getWorld() instanceof ServerWorld serverWorld) {
                     // Heavy attack with extra knockback
-                    this.mob.tryAttack(target);
+                    this.mob.tryAttack(serverWorld, target);
                     this.mob.swingHand(this.mob.getActiveHand());
 
                     // Impact effect
                     this.mob.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_CRIT, 1.0f, 0.8f);
 
-                    for (int i = 0; i < 10; i++) {
-                        this.mob.getWorld().addParticle(
+                    if (this.mob.getWorld() instanceof ServerWorld sw) {
+                        sw.spawnParticles(
                             ParticleTypes.CRIT,
-                            target.getX() + this.mob.getRandom().nextGaussian() * 0.5,
+                            target.getX(),
                             target.getY() + 1.0,
-                            target.getZ() + this.mob.getRandom().nextGaussian() * 0.5,
-                            0, 0.1, 0
+                            target.getZ(),
+                            10, 0.5, 0.5, 0.5, 0.1
                         );
                     }
                 }

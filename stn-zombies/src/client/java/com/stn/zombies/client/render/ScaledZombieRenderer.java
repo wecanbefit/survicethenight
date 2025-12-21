@@ -2,6 +2,7 @@ package com.stn.zombies.client.render;
 
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.ZombieEntityRenderer;
+import net.minecraft.client.render.entity.state.ZombieEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.util.Identifier;
@@ -21,13 +22,8 @@ public class ScaledZombieRenderer extends ZombieEntityRenderer {
     }
 
     @Override
-    protected void scale(ZombieEntity entity, MatrixStack matrices, float amount) {
+    protected void scale(ZombieEntityRenderState state, MatrixStack matrices) {
         matrices.scale(scale, scale, scale);
-        super.scale(entity, matrices, amount);
-    }
-
-    @Override
-    public Identifier getTexture(ZombieEntity entity) {
-        return texture;
+        super.scale(state, matrices);
     }
 }

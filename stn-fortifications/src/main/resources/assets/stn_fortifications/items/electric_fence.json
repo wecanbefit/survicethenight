@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "stn_fortifications:item/electric_fence"
+  }
+}

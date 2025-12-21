@@ -1,0 +1,40 @@
+{
+  "entity.stn_traders.survival_trader": "Survival Trader",
+
+  "block.stn_traders.jobs_board": "Jobs Board",
+
+  "screen.stn_traders.jobs_board": "Jobs Board",
+
+  "item.stn_traders.bruiser_fang": "Bruiser Fang",
+  "item.stn_traders.howler_vocal_cord": "Howler Vocal Cord",
+  "item.stn_traders.sprinter_heart": "Sprinter Heart",
+  "item.stn_traders.spitter_gland": "Spitter Gland",
+  "item.stn_traders.plague_sample": "Plague Sample",
+  "item.stn_traders.charged_core": "Charged Core",
+  "item.stn_traders.lumberjack_axe_head": "Lumberjack Axe Head",
+  "item.stn_traders.leech_fang": "Leech Fang",
+  "item.stn_traders.shattered_shield": "Shattered Shield",
+
+  "item.stn_traders.marksman_eye": "Marksman Eye",
+  "item.stn_traders.flame_arrow": "Flame Arrow",
+  "item.stn_traders.reaper_bone": "Reaper Bone",
+  "item.stn_traders.vanguard_plate": "Vanguard Plate",
+
+  "item.stn_traders.broodmother_egg": "Broodmother Egg",
+  "item.stn_traders.venom_sac": "Venom Sac",
+  "item.stn_traders.leaper_leg": "Leaper Leg",
+  "item.stn_traders.web_gland": "Web Gland",
+
+  "tooltip.stn_traders.trophy.common": "Common Trophy",
+  "tooltip.stn_traders.trophy.uncommon": "Uncommon Trophy",
+  "tooltip.stn_traders.trophy.rare": "Rare Trophy",
+  "tooltip.stn_traders.trophy.epic": "Epic Trophy",
+
+  "quest.stn_traders.accepted": "Quest accepted!",
+  "quest.stn_traders.completed": "Quest complete! Return to the Jobs board to claim your reward.",
+  "quest.stn_traders.failed": "All active quests failed due to death!",
+  "quest.stn_traders.max_quests": "You already have 3 active quests!",
+  "quest.stn_traders.not_available": "This quest is not available at your level.",
+
+  "itemGroup.stn_traders": "STN Traders"
+}

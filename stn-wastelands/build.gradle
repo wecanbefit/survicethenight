@@ -1,8 +1,18 @@
 archivesBaseName = "stn-wastelands"
 
 dependencies {
-    // Depends on stn-core
+    // Depends on stn-core, stn-mobai, and stn-zombies
     implementation project(':stn-core')
+    implementation project(':stn-mobai')
+    implementation project(':stn-zombies')
+
+    // Config and UI
+    modImplementation("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+    modImplementation("com.terraformersmc:modmenu:${project.mod_menu_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
 }
 
 publishing {

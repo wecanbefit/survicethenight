@@ -4,6 +4,9 @@ dependencies {
     // Depends on stn-core and stn-fortifications
     implementation project(':stn-core')
     implementation project(':stn-fortifications')
+
+    // Include client classes from stn-fortifications for client source set
+    clientImplementation project(path: ':stn-fortifications', configuration: 'namedElements')
 }
 
 publishing {

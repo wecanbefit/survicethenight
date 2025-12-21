@@ -16,6 +16,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.World;
@@ -51,11 +52,11 @@ public class DuelistSkeletonEntity extends WitherSkeletonEntity implements Block
 
     public static DefaultAttributeContainer.Builder createDuelistAttributes() {
         return HostileEntity.createHostileAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, STNSkeletonsConfig.DUELIST_HEALTH)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, STNSkeletonsConfig.DUELIST_SPEED)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, STNSkeletonsConfig.DUELIST_DAMAGE)
-            .add(EntityAttributes.GENERIC_ATTACK_SPEED, 2.0) // Faster attacks
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
+            .add(EntityAttributes.MAX_HEALTH, STNSkeletonsConfig.DUELIST_HEALTH)
+            .add(EntityAttributes.MOVEMENT_SPEED, STNSkeletonsConfig.DUELIST_SPEED)
+            .add(EntityAttributes.ATTACK_DAMAGE, STNSkeletonsConfig.DUELIST_DAMAGE)
+            .add(EntityAttributes.ATTACK_SPEED, 2.0) // Faster attacks
+            .add(EntityAttributes.FOLLOW_RANGE, 32.0);
     }
 
     @Override
@@ -80,13 +81,13 @@ public class DuelistSkeletonEntity extends WitherSkeletonEntity implements Block
 
         // Speed trail particles
         if (this.getVelocity().horizontalLengthSquared() > 0.04) {
-            if (this.random.nextInt(3) == 0) {
-                this.getWorld().addParticle(
+            if (this.random.nextInt(3) == 0 && this.getWorld() instanceof ServerWorld sw) {
+                sw.spawnParticles(
                     ParticleTypes.SOUL,
                     this.getX(),
                     this.getY() + 0.5,
                     this.getZ(),
-                    0, 0, 0
+                    1, 0, 0, 0, 0
                 );
             }
         }
@@ -105,15 +106,13 @@ public class DuelistSkeletonEntity extends WitherSkeletonEntity implements Block
             this.playSound(SoundEvents.ENTITY_PHANTOM_FLAP, 1.0f, 1.5f);
 
             // Dash particles
-            for (int i = 0; i < 10; i++) {
-                this.getWorld().addParticle(
+            if (this.getWorld() instanceof ServerWorld sw) {
+                sw.spawnParticles(
                     ParticleTypes.SOUL_FIRE_FLAME,
-                    this.getX() + this.random.nextGaussian() * 0.3,
+                    this.getX(),
                     this.getY() + 1.0,
-                    this.getZ() + this.random.nextGaussian() * 0.3,
-                    -velocityX * 0.1,
-                    0,
-                    -velocityZ * 0.1
+                    this.getZ(),
+                    10, 0.3, 0.3, 0.3, 0.1
                 );
             }
         }

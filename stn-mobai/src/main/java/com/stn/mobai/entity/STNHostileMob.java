@@ -43,7 +43,7 @@ public abstract class STNHostileMob extends HostileEntity implements ISensoryMob
 
     public static DefaultAttributeContainer.Builder createSTNMobAttributes() {
         return HostileEntity.createHostileAttributes()
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 48.0);
+            .add(EntityAttributes.FOLLOW_RANGE, 48.0);
     }
 
     // ISensoryMob defaults - override in subclasses as needed

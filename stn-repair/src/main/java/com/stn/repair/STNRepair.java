@@ -1,6 +1,7 @@
 package com.stn.repair;
 
 import com.stn.core.STNCore;
+import com.stn.repair.registry.STNItems;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,8 @@ public class STNRepair implements ModInitializer {
     public void onInitialize() {
         LOGGER.info("Survive The Night - Repair initializing...");
 
-        // TODO: Register items
+        // Register items
+        STNItems.register();
 
         LOGGER.info("Survive The Night - Repair initialized!");
     }

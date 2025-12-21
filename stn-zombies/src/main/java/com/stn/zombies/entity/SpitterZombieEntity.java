@@ -10,6 +10,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -35,11 +36,11 @@ public class SpitterZombieEntity extends ZombieEntity implements BlockBreakAnima
 
     public static DefaultAttributeContainer.Builder createSpitterAttributes() {
         return ZombieEntity.createZombieAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, STNZombiesConfig.SPITTER_HEALTH)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, STNZombiesConfig.SPITTER_SPEED)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, STNZombiesConfig.SPITTER_DAMAGE)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 24.0)
-            .add(EntityAttributes.GENERIC_ARMOR, 0.0);
+            .add(EntityAttributes.MAX_HEALTH, STNZombiesConfig.SPITTER_HEALTH)
+            .add(EntityAttributes.MOVEMENT_SPEED, STNZombiesConfig.SPITTER_SPEED)
+            .add(EntityAttributes.ATTACK_DAMAGE, STNZombiesConfig.SPITTER_DAMAGE)
+            .add(EntityAttributes.FOLLOW_RANGE, 24.0)
+            .add(EntityAttributes.ARMOR, 0.0);
     }
 
     @Override
@@ -51,13 +52,13 @@ public class SpitterZombieEntity extends ZombieEntity implements BlockBreakAnima
         }
 
         // Dripping acid particles
-        if (!this.getWorld().isClient() && this.random.nextInt(20) == 0) {
-            this.getWorld().addParticle(
+        if (this.getWorld() instanceof ServerWorld sw && this.random.nextInt(20) == 0) {
+            sw.spawnParticles(
                 ParticleTypes.FALLING_DRIPSTONE_WATER,
-                this.getX() + this.random.nextGaussian() * 0.2,
+                this.getX(),
                 this.getY() + 1.5,
-                this.getZ() + this.random.nextGaussian() * 0.2,
-                0, -0.1, 0
+                this.getZ(),
+                1, 0.2, 0, 0.2, 0
             );
         }
     }
@@ -88,13 +89,13 @@ public class SpitterZombieEntity extends ZombieEntity implements BlockBreakAnima
         // Sound and particles
         this.playSound(SoundEvents.ENTITY_LLAMA_SPIT, 1.0f, 0.8f);
 
-        for (int i = 0; i < 5; i++) {
-            this.getWorld().addParticle(
+        if (this.getWorld() instanceof ServerWorld sw) {
+            sw.spawnParticles(
                 ParticleTypes.SNEEZE,
                 this.getX(),
                 this.getY() + 1.5,
                 this.getZ(),
-                dx * 0.1, dy * 0.1, dz * 0.1
+                5, 0.1, 0.1, 0.1, 0.1
             );
         }
     }

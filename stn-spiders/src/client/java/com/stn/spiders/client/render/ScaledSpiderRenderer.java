@@ -2,6 +2,7 @@ package com.stn.spiders.client.render;
 
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.SpiderEntityRenderer;
+import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.util.Identifier;
@@ -21,13 +22,8 @@ public class ScaledSpiderRenderer<T extends SpiderEntity> extends SpiderEntityRe
     }
 
     @Override
-    protected void scale(T entity, MatrixStack matrices, float amount) {
+    protected void scale(LivingEntityRenderState state, MatrixStack matrices) {
         matrices.scale(scale, scale, scale);
-        super.scale(entity, matrices, amount);
-    }
-
-    @Override
-    public Identifier getTexture(T entity) {
-        return texture;
+        super.scale(state, matrices);
     }
 }

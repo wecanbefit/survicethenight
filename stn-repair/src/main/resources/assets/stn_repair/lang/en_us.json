@@ -1,0 +1,9 @@
+{
+  "item.stn_repair.wooden_hammer": "Wooden Hammer",
+  "item.stn_repair.stone_hammer": "Stone Hammer",
+  "item.stn_repair.iron_hammer": "Iron Hammer",
+  "item.stn_repair.diamond_hammer": "Diamond Hammer",
+  "item.stn_repair.netherite_hammer": "Netherite Hammer",
+
+  "itemGroup.stn_repair.repair": "STN - Repair Tools"
+}

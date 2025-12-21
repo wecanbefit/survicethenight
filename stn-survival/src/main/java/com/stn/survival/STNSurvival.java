@@ -4,6 +4,7 @@ import com.stn.core.STNCore;
 import com.stn.survival.command.SurvivalNightCommand;
 import com.stn.survival.config.STNSurvivalConfig;
 import com.stn.survival.event.SurvivalNightManager;
+import com.stn.survival.network.GamestageHudPayload;
 import com.stn.survival.network.SurvivalNightSyncPayload;
 import com.stn.survival.progression.GamestageManager;
 import net.fabricmc.api.ModInitializer;
@@ -34,6 +35,7 @@ public class STNSurvival implements ModInitializer {
 
         // Register network payloads
         PayloadTypeRegistry.playS2C().register(SurvivalNightSyncPayload.ID, SurvivalNightSyncPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(GamestageHudPayload.ID, GamestageHudPayload.CODEC);
 
         // Set up server lifecycle events
         ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted);

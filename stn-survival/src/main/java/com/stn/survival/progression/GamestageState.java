@@ -1,15 +1,17 @@
 package com.stn.survival.progression;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.stn.survival.STNSurvival;
-import net.minecraft.datafixer.DataFixTypes;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Uuids;
 import net.minecraft.world.PersistentState;
-import net.minecraft.world.PersistentStateManager;
+import net.minecraft.world.PersistentStateType;
+import net.minecraft.world.World;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,76 +27,64 @@ public class GamestageState extends PersistentState {
     private long lastDayCheck = 0;
     private final Map<UUID, PlayerGamestage> playerData = new HashMap<>();
 
-    public static Type<GamestageState> TYPE = new Type<>(
+    // Codec for PlayerGamestage
+    private static final Codec<PlayerGamestage> PLAYER_CODEC = RecordCodecBuilder.create(instance ->
+        instance.group(
+            Uuids.CODEC.fieldOf("uuid").forGetter(PlayerGamestage::getPlayerUuid),
+            Codec.STRING.fieldOf("name").forGetter(PlayerGamestage::getPlayerName),
+            Codec.INT.fieldOf("daysSurvived").forGetter(PlayerGamestage::getDaysSurvived),
+            Codec.INT.fieldOf("zombieKills").forGetter(PlayerGamestage::getZombieKills),
+            Codec.INT.fieldOf("survivalNightsSurvived").forGetter(PlayerGamestage::getSurvivalNightsSurvived),
+            Codec.INT.fieldOf("deathCount").forGetter(PlayerGamestage::getDeathCount)
+        ).apply(instance, (uuid, name, days, kills, nights, deaths) -> {
+            PlayerGamestage p = new PlayerGamestage(uuid, name);
+            p.setDaysSurvived(days);
+            p.setZombieKills(kills);
+            p.setSurvivalNightsSurvived(nights);
+            p.setDeathCount(deaths);
+            return p;
+        })
+    );
+
+    // Codec for GamestageState
+    private static final Codec<GamestageState> CODEC = RecordCodecBuilder.create(instance ->
+        instance.group(
+            Codec.INT.fieldOf("worldGamestage").forGetter(s -> s.worldGamestage),
+            Codec.INT.fieldOf("survivalNightsSurvived").forGetter(s -> s.survivalNightsSurvived),
+            Codec.LONG.fieldOf("lastDayCheck").forGetter(s -> s.lastDayCheck),
+            Codec.list(PLAYER_CODEC).fieldOf("players").forGetter(s -> List.copyOf(s.playerData.values()))
+        ).apply(instance, (worldGs, survNights, lastDay, players) -> {
+            GamestageState state = new GamestageState();
+            state.worldGamestage = worldGs;
+            state.survivalNightsSurvived = survNights;
+            state.lastDayCheck = lastDay;
+            for (PlayerGamestage p : players) {
+                state.playerData.put(p.getPlayerUuid(), p);
+            }
+            STNSurvival.LOGGER.info("Loaded gamestage data: worldGamestage={}, players={}",
+                state.worldGamestage, state.playerData.size());
+            return state;
+        })
+    );
+
+    private static final PersistentStateType<GamestageState> TYPE = new PersistentStateType<>(
+        STATE_ID,
         GamestageState::new,
-        GamestageState::fromNbt,
-        DataFixTypes.LEVEL
+        CODEC,
+        null
     );
 
     public GamestageState() {
     }
 
-    public static GamestageState fromNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        GamestageState state = new GamestageState();
-
-        state.worldGamestage = nbt.getInt("worldGamestage");
-        state.survivalNightsSurvived = nbt.getInt("survivalNightsSurvived");
-        state.lastDayCheck = nbt.getLong("lastDayCheck");
-
-        // Load player data
-        NbtList playerList = nbt.getList("players", NbtCompound.COMPOUND_TYPE);
-        for (int i = 0; i < playerList.size(); i++) {
-            NbtCompound playerNbt = playerList.getCompound(i);
-            UUID uuid = playerNbt.getUuid("uuid");
-            String name = playerNbt.getString("name");
-
-            PlayerGamestage player = new PlayerGamestage(uuid, name);
-            player.setDaysSurvived(playerNbt.getInt("daysSurvived"));
-            player.setZombieKills(playerNbt.getInt("zombieKills"));
-            player.setSurvivalNightsSurvived(playerNbt.getInt("survivalNightsSurvived"));
-            player.setDeathCount(playerNbt.getInt("deathCount"));
-
-            state.playerData.put(uuid, player);
-        }
-
-        STNSurvival.LOGGER.info("Loaded gamestage data: worldGamestage={}, players={}",
-            state.worldGamestage, state.playerData.size());
-
-        return state;
-    }
-
-    @Override
-    public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        nbt.putInt("worldGamestage", worldGamestage);
-        nbt.putInt("survivalNightsSurvived", survivalNightsSurvived);
-        nbt.putLong("lastDayCheck", lastDayCheck);
-
-        // Save player data
-        NbtList playerList = new NbtList();
-        for (Map.Entry<UUID, PlayerGamestage> entry : playerData.entrySet()) {
-            PlayerGamestage player = entry.getValue();
-            NbtCompound playerNbt = new NbtCompound();
-
-            playerNbt.putUuid("uuid", player.getPlayerUuid());
-            playerNbt.putString("name", player.getPlayerName());
-            playerNbt.putInt("daysSurvived", player.getDaysSurvived());
-            playerNbt.putInt("zombieKills", player.getZombieKills());
-            playerNbt.putInt("survivalNightsSurvived", player.getSurvivalNightsSurvived());
-            playerNbt.putInt("deathCount", player.getDeathCount());
-
-            playerList.add(playerNbt);
-        }
-        nbt.put("players", playerList);
-
-        STNSurvival.LOGGER.info("Saved gamestage data: worldGamestage={}, players={}",
-            worldGamestage, playerData.size());
-
-        return nbt;
-    }
-
     public static GamestageState get(MinecraftServer server) {
-        PersistentStateManager stateManager = server.getOverworld().getPersistentStateManager();
-        return stateManager.getOrCreate(TYPE, STATE_ID);
+        ServerWorld overworld = server.getWorld(World.OVERWORLD);
+        if (overworld == null) {
+            throw new IllegalStateException("Overworld not available");
+        }
+        GamestageState state = overworld.getPersistentStateManager().getOrCreate(TYPE);
+        state.markDirty();
+        return state;
     }
 
     // Getters and setters

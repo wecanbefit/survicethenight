@@ -134,14 +134,21 @@ public class MobSenseGoal extends Goal {
         SenseTarget bestTarget = null;
         double bestScore = 0;
 
-        // Check sound first - cheapest operation (uses existing sound list)
+        // Check for players FIRST - highest priority, works all the time
+        SenseTarget playerTarget = evaluatePlayer(serverWorld);
+        if (playerTarget != null && playerTarget.score > bestScore) {
+            bestScore = playerTarget.score;
+            bestTarget = playerTarget;
+        }
+
+        // Check sound - uses existing sound list
         SenseTarget soundTarget = evaluateSound(serverWorld);
         if (soundTarget != null && soundTarget.score > bestScore) {
             bestScore = soundTarget.score;
             bestTarget = soundTarget;
         }
 
-        // Check smell (only during survival night) - entity queries are relatively cheap
+        // Check smell (only during survival night) - extends detection through walls
         if (sensoryMob.canSmell() && survivalNightChecker.isSurvivalNight()) {
             SenseTarget smellTarget = evaluateSmell(serverWorld);
             if (smellTarget != null && smellTarget.score > bestScore) {
@@ -183,6 +190,37 @@ public class MobSenseGoal extends Goal {
         }
 
         return false;
+    }
+
+    private SenseTarget evaluatePlayer(ServerWorld world) {
+        BlockPos mobPos = mob.getBlockPos();
+        double playerRange = sensoryMob.getPlayerDetectionRange();
+        Box searchBox = new Box(mobPos).expand(playerRange);
+
+        SenseTarget bestTarget = null;
+        double bestScore = 0;
+
+        List<PlayerEntity> players = world.getEntitiesByClass(
+            PlayerEntity.class,
+            searchBox,
+            player -> player.isAlive() && !player.isSpectator() && !player.isCreative()
+        );
+
+        for (PlayerEntity player : players) {
+            double distance = mobPos.getSquaredDistance(player.getBlockPos());
+            if (distance > playerRange * playerRange) continue;
+
+            double normalizedDistance = Math.sqrt(distance) / playerRange;
+            // High base score for players - they are the primary target
+            double score = (1.0 - normalizedDistance) * 150.0 * sensoryMob.getPlayerWeight();
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestTarget = new SenseTarget(player.getBlockPos(), player, SenseType.PLAYER, score);
+            }
+        }
+
+        return bestTarget;
     }
 
     private SenseTarget evaluateSound(ServerWorld world) {
@@ -307,6 +345,7 @@ public class MobSenseGoal extends Goal {
     }
 
     public enum SenseType {
+        PLAYER,
         SOUND,
         SMELL,
         LIGHT,

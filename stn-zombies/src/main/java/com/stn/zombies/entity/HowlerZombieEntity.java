@@ -38,11 +38,11 @@ public class HowlerZombieEntity extends ZombieEntity implements BlockBreakAnimat
 
     public static DefaultAttributeContainer.Builder createHowlerAttributes() {
         return ZombieEntity.createZombieAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, STNZombiesConfig.HOWLER_HEALTH)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, STNZombiesConfig.HOWLER_SPEED)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, STNZombiesConfig.HOWLER_DAMAGE)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 48.0)
-            .add(EntityAttributes.GENERIC_ARMOR, 0.0);
+            .add(EntityAttributes.MAX_HEALTH, STNZombiesConfig.HOWLER_HEALTH)
+            .add(EntityAttributes.MOVEMENT_SPEED, STNZombiesConfig.HOWLER_SPEED)
+            .add(EntityAttributes.ATTACK_DAMAGE, STNZombiesConfig.HOWLER_DAMAGE)
+            .add(EntityAttributes.FOLLOW_RANGE, 48.0)
+            .add(EntityAttributes.ARMOR, 0.0);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class HowlerZombieEntity extends ZombieEntity implements BlockBreakAnimat
             this.getWorld().playSound(
                 null,
                 this.getBlockPos(),
-                SoundEvents.ENTITY_WOLF_HOWL,
+                SoundEvents.ENTITY_GHAST_AMBIENT,
                 SoundCategory.HOSTILE,
                 0.3f,
                 0.6f
@@ -91,7 +91,7 @@ public class HowlerZombieEntity extends ZombieEntity implements BlockBreakAnimat
         this.getWorld().playSound(
             null,
             this.getBlockPos(),
-            SoundEvents.ENTITY_WOLF_HOWL,
+            SoundEvents.ENTITY_RAVAGER_ROAR,
             SoundCategory.HOSTILE,
             1.5f,
             0.5f
@@ -108,7 +108,7 @@ public class HowlerZombieEntity extends ZombieEntity implements BlockBreakAnimat
         this.getWorld().playSound(
             null,
             this.getBlockPos(),
-            SoundEvents.ENTITY_WOLF_HOWL,
+            SoundEvents.ENTITY_RAVAGER_ROAR,
             SoundCategory.HOSTILE,
             3.0f,
             0.4f
@@ -159,25 +159,23 @@ public class HowlerZombieEntity extends ZombieEntity implements BlockBreakAnimat
         }
 
         // Big particle burst
-        for (int i = 0; i < 30; i++) {
-            this.getWorld().addParticle(
-                ParticleTypes.NOTE,
-                this.getX() + this.random.nextGaussian() * 2,
-                this.getY() + 1.5 + this.random.nextGaussian(),
-                this.getZ() + this.random.nextGaussian() * 2,
-                0, 0.1, 0
-            );
-        }
+        serverWorld.spawnParticles(
+            ParticleTypes.NOTE,
+            this.getX(),
+            this.getY() + 1.5,
+            this.getZ(),
+            30, 2.0, 1.0, 2.0, 0.1
+        );
     }
 
     private void spawnHowlParticles() {
-        for (int i = 0; i < 2; i++) {
-            this.getWorld().addParticle(
+        if (this.getWorld() instanceof ServerWorld sw) {
+            sw.spawnParticles(
                 ParticleTypes.NOTE,
-                this.getX() + this.random.nextGaussian() * 0.3,
+                this.getX(),
                 this.getY() + 2.0,
-                this.getZ() + this.random.nextGaussian() * 0.3,
-                0, 0.05, 0
+                this.getZ(),
+                2, 0.3, 0, 0.3, 0.05
             );
         }
     }

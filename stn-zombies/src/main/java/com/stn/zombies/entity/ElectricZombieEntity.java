@@ -36,11 +36,11 @@ public class ElectricZombieEntity extends ZombieEntity implements BlockBreakAnim
 
     public static DefaultAttributeContainer.Builder createElectricAttributes() {
         return ZombieEntity.createZombieAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, STNZombiesConfig.ELECTRIC_HEALTH)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, STNZombiesConfig.ELECTRIC_SPEED)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, STNZombiesConfig.ELECTRIC_DAMAGE)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
-            .add(EntityAttributes.GENERIC_ARMOR, 0.0);
+            .add(EntityAttributes.MAX_HEALTH, STNZombiesConfig.ELECTRIC_HEALTH)
+            .add(EntityAttributes.MOVEMENT_SPEED, STNZombiesConfig.ELECTRIC_SPEED)
+            .add(EntityAttributes.ATTACK_DAMAGE, STNZombiesConfig.ELECTRIC_DAMAGE)
+            .add(EntityAttributes.FOLLOW_RANGE, 32.0)
+            .add(EntityAttributes.ARMOR, 0.0);
     }
 
     @Override
@@ -71,27 +71,26 @@ public class ElectricZombieEntity extends ZombieEntity implements BlockBreakAnim
         }
 
         // Constant electric particles
-        if (this.random.nextInt(5) == 0) {
-            this.getWorld().addParticle(
+        if (this.random.nextInt(5) == 0 && this.getWorld() instanceof ServerWorld sw) {
+            sw.spawnParticles(
                 ParticleTypes.ELECTRIC_SPARK,
                 this.getX() + this.random.nextGaussian() * 0.3,
                 this.getY() + 1.0 + this.random.nextDouble(),
                 this.getZ() + this.random.nextGaussian() * 0.3,
-                0, 0, 0
+                1, 0, 0, 0, 0
             );
         }
     }
 
     private void spawnSparkParticles() {
+        if (!(this.getWorld() instanceof ServerWorld serverWorld)) return;
         for (int i = 0; i < 3; i++) {
-            this.getWorld().addParticle(
+            serverWorld.spawnParticles(
                 ParticleTypes.ELECTRIC_SPARK,
                 this.getX() + this.random.nextGaussian() * 0.5,
                 this.getY() + 1.5,
                 this.getZ() + this.random.nextGaussian() * 0.5,
-                this.random.nextGaussian() * 0.1,
-                0.1,
-                this.random.nextGaussian() * 0.1
+                1, 0.1, 0.1, 0.1, 0.1
             );
         }
     }
@@ -104,17 +103,13 @@ public class ElectricZombieEntity extends ZombieEntity implements BlockBreakAnim
         this.playSound(SoundEvents.ENTITY_LIGHTNING_BOLT_IMPACT, 2.0f, 1.0f);
 
         // Big flash of particles
-        for (int i = 0; i < 30; i++) {
-            this.getWorld().addParticle(
-                ParticleTypes.ELECTRIC_SPARK,
-                this.getX() + this.random.nextGaussian(),
-                this.getY() + this.random.nextDouble() * 2,
-                this.getZ() + this.random.nextGaussian(),
-                this.random.nextGaussian() * 0.2,
-                0.2,
-                this.random.nextGaussian() * 0.2
-            );
-        }
+        serverWorld.spawnParticles(
+            ParticleTypes.ELECTRIC_SPARK,
+            this.getX(),
+            this.getY() + 1.0,
+            this.getZ(),
+            30, 1.0, 1.0, 1.0, 0.2
+        );
 
         // Damage nearby entities in AOE
         double radius = STNZombiesConfig.ELECTRIC_AOE_RADIUS;
@@ -133,18 +128,16 @@ public class ElectricZombieEntity extends ZombieEntity implements BlockBreakAnim
             if (distance <= radius) {
                 // Damage falls off with distance
                 float damage = (float) (STNZombiesConfig.ELECTRIC_LIGHTNING_DAMAGE * (1.0 - distance / radius));
-                entity.damage(lightningDamage, damage);
+                entity.damage(serverWorld, lightningDamage, damage);
 
                 // Spark particles on hit entity
-                for (int i = 0; i < 5; i++) {
-                    entity.getWorld().addParticle(
-                        ParticleTypes.ELECTRIC_SPARK,
-                        entity.getX() + this.random.nextGaussian() * 0.3,
-                        entity.getY() + 1.0,
-                        entity.getZ() + this.random.nextGaussian() * 0.3,
-                        0, 0.1, 0
-                    );
-                }
+                serverWorld.spawnParticles(
+                    ParticleTypes.ELECTRIC_SPARK,
+                    entity.getX(),
+                    entity.getY() + 1.0,
+                    entity.getZ(),
+                    5, 0.3, 0.3, 0.3, 0.1
+                );
             }
         }
     }

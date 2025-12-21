@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pixel Coordinate Finder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            padding: 20px;
+            margin: 0;
+        }
+        #coords {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #333;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 1000;
+        }
+        #coords span {
+            color: #4fc3f7;
+        }
+        #container {
+            display: inline-block;
+            position: relative;
+            cursor: crosshair;
+        }
+        #image {
+            display: block;
+            image-rendering: pixelated;
+        }
+        #crosshairH, #crosshairV {
+            position: absolute;
+            background: rgba(255, 0, 0, 0.5);
+            pointer-events: none;
+        }
+        #crosshairH {
+            height: 1px;
+            width: 100%;
+            left: 0;
+        }
+        #crosshairV {
+            width: 1px;
+            height: 100%;
+            top: 0;
+        }
+        #instructions {
+            margin-bottom: 20px;
+            color: #aaa;
+        }
+        #zoomLevel {
+            margin-top: 10px;
+        }
+        input[type="file"] {
+            margin-bottom: 20px;
+        }
+        #clicked {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: #333;
+            padding: 10px 20px;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .click-entry {
+            margin: 5px 0;
+            color: #81c784;
+        }
+    </style>
+</head>
+<body>
+    <div id="coords">X: <span id="x">0</span>, Y: <span id="y">0</span></div>
+
+    <div id="instructions">
+        Load your image below, then hover over it to see coordinates.<br>
+        Click to log a position. Use zoom slider to make small images easier to work with.
+    </div>
+
+    <input type="file" id="fileInput" accept="image/*">
+
+    <div id="zoomLevel">
+        Zoom: <input type="range" id="zoom" min="1" max="10" value="2" step="1">
+        <span id="zoomVal">2x</span>
+    </div>
+
+    <br><br>
+
+    <div id="container" style="display: none;">
+        <img id="image">
+        <div id="crosshairH"></div>
+        <div id="crosshairV"></div>
+    </div>
+
+    <div id="clicked">
+        <strong>Clicked positions:</strong>
+        <div id="clickLog"></div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const image = document.getElementById('image');
+        const container = document.getElementById('container');
+        const xSpan = document.getElementById('x');
+        const ySpan = document.getElementById('y');
+        const crosshairH = document.getElementById('crosshairH');
+        const crosshairV = document.getElementById('crosshairV');
+        const zoomSlider = document.getElementById('zoom');
+        const zoomVal = document.getElementById('zoomVal');
+        const clickLog = document.getElementById('clickLog');
+
+        let naturalWidth = 0;
+        let naturalHeight = 0;
+        let zoom = 2;
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    image.src = e.target.result;
+                    image.onload = () => {
+                        naturalWidth = image.naturalWidth;
+                        naturalHeight = image.naturalHeight;
+                        updateZoom();
+                        container.style.display = 'inline-block';
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        zoomSlider.addEventListener('input', () => {
+            zoom = parseInt(zoomSlider.value);
+            zoomVal.textContent = zoom + 'x';
+            updateZoom();
+        });
+
+        function updateZoom() {
+            image.style.width = (naturalWidth * zoom) + 'px';
+            image.style.height = (naturalHeight * zoom) + 'px';
+        }
+
+        container.addEventListener('mousemove', (e) => {
+            const rect = container.getBoundingClientRect();
+            const displayX = e.clientX - rect.left;
+            const displayY = e.clientY - rect.top;
+
+            // Convert to actual image coordinates
+            const imgX = Math.floor(displayX / zoom);
+            const imgY = Math.floor(displayY / zoom);
+
+            xSpan.textContent = imgX;
+            ySpan.textContent = imgY;
+
+            crosshairH.style.top = displayY + 'px';
+            crosshairV.style.left = displayX + 'px';
+        });
+
+        container.addEventListener('click', (e) => {
+            const x = xSpan.textContent;
+            const y = ySpan.textContent;
+            const entry = document.createElement('div');
+            entry.className = 'click-entry';
+            entry.textContent = `X: ${x}, Y: ${y}`;
+            clickLog.appendChild(entry);
+        });
+    </script>
+</body>
+</html>

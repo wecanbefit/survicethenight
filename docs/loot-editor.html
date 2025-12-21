@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loot Config Editor - Survive The Night</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+        .font-creepy { font-family: 'Creepster', cursive; }
+        .font-mono { font-family: 'Fira Code', monospace; }
+        .bg-gradient-night { background: linear-gradient(135deg, #1a1505 0%, #2e2a0a 50%, #1a1505 100%); }
+        .item-icon { image-rendering: pixelated; }
+        .tier-btn.active { background: rgba(234, 179, 8, 0.3); border-color: rgb(234, 179, 8); }
+    </style>
+</head>
+<body class="bg-gradient-night min-h-screen text-gray-100 font-['Inter']">
+    <nav class="fixed top-0 w-full bg-black/80 backdrop-blur-md z-50 border-b border-yellow-900/50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-3xl">🌙</span>
+                <span class="font-creepy text-2xl text-green-500">STN</span>
+                <span class="text-gray-400">/</span>
+                <span class="text-yellow-400 font-semibold">loot-editor</span>
+            </a>
+            <div class="flex gap-4">
+                <a href="stn-wastelands.html" class="text-gray-300 hover:text-yellow-400">Docs</a>
+                <a href="index.html" class="text-gray-300 hover:text-yellow-400">Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="pt-24 pb-8 px-4 text-center">
+        <h1 class="font-creepy text-4xl text-yellow-500 mb-2">Loot Config Editor</h1>
+        <p class="text-gray-400">Load, edit, and export your loot.json configuration</p>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 pb-16">
+        <!-- File Controls -->
+        <div class="flex flex-wrap gap-4 mb-8 justify-center">
+            <label class="px-4 py-2 bg-green-700 hover:bg-green-600 rounded-lg cursor-pointer transition">
+                <span>Load loot.json</span>
+                <input type="file" id="fileInput" accept=".json" class="hidden">
+            </label>
+            <button onclick="loadDefault()" class="px-4 py-2 bg-blue-700 hover:bg-blue-600 rounded-lg transition">
+                Load Default
+            </button>
+            <button onclick="exportConfig()" class="px-4 py-2 bg-yellow-700 hover:bg-yellow-600 rounded-lg transition">
+                Export JSON
+            </button>
+            <button onclick="showAddModal()" class="px-4 py-2 bg-purple-700 hover:bg-purple-600 rounded-lg transition">
+                + Add Item
+            </button>
+        </div>
+
+        <!-- Tier Selector -->
+        <div class="flex flex-wrap justify-center gap-2 mb-8">
+            <span class="text-gray-400 self-center mr-2">Select Tier:</span>
+            <button onclick="selectTier(0)" class="tier-btn px-4 py-2 bg-black/40 border border-green-900/50 rounded-lg hover:border-green-500 transition" data-tier="0">
+                <div class="text-green-400 font-bold">0</div>
+                <div class="text-xs text-gray-500">0-9</div>
+            </button>
+            <button onclick="selectTier(1)" class="tier-btn px-4 py-2 bg-black/40 border border-green-900/50 rounded-lg hover:border-green-500 transition" data-tier="1">
+                <div class="text-green-400 font-bold">1</div>
+                <div class="text-xs text-gray-500">10-19</div>
+            </button>
+            <button onclick="selectTier(2)" class="tier-btn px-4 py-2 bg-black/40 border border-yellow-900/50 rounded-lg hover:border-yellow-500 transition" data-tier="2">
+                <div class="text-yellow-400 font-bold">2</div>
+                <div class="text-xs text-gray-500">20-29</div>
+            </button>
+            <button onclick="selectTier(3)" class="tier-btn px-4 py-2 bg-black/40 border border-yellow-900/50 rounded-lg hover:border-yellow-500 transition" data-tier="3">
+                <div class="text-yellow-400 font-bold">3</div>
+                <div class="text-xs text-gray-500">30-39</div>
+            </button>
+            <button onclick="selectTier(4)" class="tier-btn px-4 py-2 bg-black/40 border border-orange-900/50 rounded-lg hover:border-orange-500 transition" data-tier="4">
+                <div class="text-orange-400 font-bold">4</div>
+                <div class="text-xs text-gray-500">40-49</div>
+            </button>
+            <button onclick="selectTier(5)" class="tier-btn px-4 py-2 bg-black/40 border border-orange-900/50 rounded-lg hover:border-orange-500 transition" data-tier="5">
+                <div class="text-orange-400 font-bold">5</div>
+                <div class="text-xs text-gray-500">50-59</div>
+            </button>
+            <button onclick="selectTier(6)" class="tier-btn px-4 py-2 bg-black/40 border border-red-900/50 rounded-lg hover:border-red-500 transition" data-tier="6">
+                <div class="text-red-400 font-bold">6</div>
+                <div class="text-xs text-gray-500">60-69</div>
+            </button>
+            <button onclick="selectTier(7)" class="tier-btn px-4 py-2 bg-black/40 border border-red-900/50 rounded-lg hover:border-red-500 transition" data-tier="7">
+                <div class="text-red-400 font-bold">7</div>
+                <div class="text-xs text-gray-500">70-79</div>
+            </button>
+            <button onclick="selectTier(8)" class="tier-btn px-4 py-2 bg-black/40 border border-purple-900/50 rounded-lg hover:border-purple-500 transition" data-tier="8">
+                <div class="text-purple-400 font-bold">8</div>
+                <div class="text-xs text-gray-500">80-89</div>
+            </button>
+            <button onclick="selectTier(9)" class="tier-btn px-4 py-2 bg-black/40 border border-purple-900/50 rounded-lg hover:border-purple-500 transition" data-tier="9">
+                <div class="text-purple-400 font-bold">9</div>
+                <div class="text-xs text-gray-500">90-99</div>
+            </button>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="flex justify-center gap-2 mb-6">
+            <button onclick="selectCategory('all')" class="cat-btn px-4 py-2 bg-yellow-900/30 border border-yellow-900/50 rounded-lg" data-cat="all">All</button>
+            <button onclick="selectCategory('material')" class="cat-btn px-4 py-2 bg-black/40 border border-gray-700 rounded-lg" data-cat="material">Materials</button>
+            <button onclick="selectCategory('gear')" class="cat-btn px-4 py-2 bg-black/40 border border-gray-700 rounded-lg" data-cat="gear">Gear</button>
+            <button onclick="selectCategory('food')" class="cat-btn px-4 py-2 bg-black/40 border border-gray-700 rounded-lg" data-cat="food">Food</button>
+            <button onclick="selectCategory('book')" class="cat-btn px-4 py-2 bg-black/40 border border-gray-700 rounded-lg" data-cat="book">Books</button>
+        </div>
+
+        <!-- Items Grid -->
+        <div id="itemsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <div class="text-center text-gray-500 col-span-full py-12">
+                Load a loot.json file or click "Load Default" to begin
+            </div>
+        </div>
+
+        <!-- Enchantment Config Section -->
+        <div id="enchantSection" class="mt-12 hidden">
+            <h2 class="font-creepy text-3xl text-yellow-400 mb-6 text-center">Enchantment Settings</h2>
+            <div class="bg-black/40 border border-yellow-900/30 rounded-xl p-6 overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-gray-400">
+                            <th class="text-left py-2">Setting</th>
+                            <th class="text-center px-2">T0</th>
+                            <th class="text-center px-2">T1</th>
+                            <th class="text-center px-2">T2</th>
+                            <th class="text-center px-2">T3</th>
+                            <th class="text-center px-2">T4</th>
+                            <th class="text-center px-2">T5</th>
+                            <th class="text-center px-2">T6</th>
+                            <th class="text-center px-2">T7</th>
+                            <th class="text-center px-2">T8</th>
+                            <th class="text-center px-2">T9</th>
+                        </tr>
+                    </thead>
+                    <tbody id="enchantTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Modal -->
+    <div id="modal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gray-900 border border-yellow-900/50 rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <h3 class="font-creepy text-2xl text-yellow-400 mb-4" id="modalTitle">Add Item</h3>
+
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Item Key (unique)</label>
+                    <input type="text" id="itemKey" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white" placeholder="diamond_sword">
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Item ID</label>
+                    <input type="text" id="itemId" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white" placeholder="minecraft:diamond_sword">
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Category</label>
+                    <select id="itemCategory" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white">
+                        <option value="material">Material</option>
+                        <option value="gear">Gear</option>
+                        <option value="food">Food</option>
+                        <option value="book">Book</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Weight (drop chance)</label>
+                    <input type="number" id="itemWeight" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white" value="10" min="1">
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Min Tier</label>
+                    <input type="number" id="itemMinTier" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white" value="0" min="0" max="9">
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Max Tier</label>
+                    <input type="number" id="itemMaxTier" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white" value="9" min="0" max="9">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="flex items-center gap-2 text-gray-400 text-sm">
+                        <input type="checkbox" id="itemCanEnchant" class="rounded">
+                        Can be enchanted
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-400 text-sm mb-2">Quantities per Tier (min / max)</label>
+                <div class="grid grid-cols-5 gap-2 text-center text-xs">
+                    <div>T0</div><div>T1</div><div>T2</div><div>T3</div><div>T4</div>
+                </div>
+                <div class="grid grid-cols-5 gap-2 mb-2">
+                    <input type="text" id="qty0" class="bg-black/50 border border-gray-700 rounded px-2 py-1 text-white text-center text-sm" placeholder="1/3">
+                    <input type="text" id="qty1" class="bg-black/50 border border-gray-700 rounded px-2 py-1 text-white text-center text-sm" placeholder="1/3">
+                    <input type="text" id="qty2" class="bg-black/50 border border-gray-700 rounded px-2 py-1 text-white text-center text-sm" placeholder="1/3">
+                    <input type="text" id="qty3" class="bg-black/50 border border-gray-700 rounded px-2 py-1 text-white text-center text-sm" placeholder="1/3">
+                    <input type="text" id="qty4" class="bg-black/50 border border-gray-700 rounded px-2 py-1 text-white text-center text-sm" placeholder="1/3">
+                </div>
+                <div class="grid grid-cols-5 gap-2 text-center text-xs">
+                    <div>T5</div><div>T6</div><div>T7</div><div>T8</div><div>T9</div>
+                </div>
+                <div class="grid grid-cols-5 gap-2">
+                    <input type="text" id="qty5" class="bg-black/50 border border-gray-700 rounded px-2 py-1 text-white text-center text-sm" placeholder="1/3">
+                    <input type="text" id="qty6" class="bg-black/50 border border-gray-700 rounded px-2 py-1 text-white text-center text-sm" placeholder="1/3">
+                    <input type="text" id="qty7" class="bg-black/50 border border-gray-700 rounded px-2 py-1 text-white text-center text-sm" placeholder="1/3">
+                    <input type="text" id="qty8" class="bg-black/50 border border-gray-700 rounded px-2 py-1 text-white text-center text-sm" placeholder="1/3">
+                    <input type="text" id="qty9" class="bg-black/50 border border-gray-700 rounded px-2 py-1 text-white text-center text-sm" placeholder="1/3">
+                </div>
+                <p class="text-gray-500 text-xs mt-1">Format: min/max (e.g., "1/5" or "0" for no drop)</p>
+            </div>
+
+            <div class="flex gap-3 justify-end">
+                <button onclick="closeModal()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg">Cancel</button>
+                <button onclick="saveItem()" class="px-4 py-2 bg-green-700 hover:bg-green-600 rounded-lg">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div id="exportModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gray-900 border border-yellow-900/50 rounded-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <h3 class="font-creepy text-2xl text-yellow-400 mb-4">Export loot.json</h3>
+            <textarea id="exportText" class="w-full h-96 bg-black/50 border border-gray-700 rounded p-4 font-mono text-sm text-green-400"></textarea>
+            <div class="flex gap-3 justify-end mt-4">
+                <button onclick="closeExportModal()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg">Close</button>
+                <button onclick="copyExport()" class="px-4 py-2 bg-green-700 hover:bg-green-600 rounded-lg">Copy to Clipboard</button>
+                <button onclick="downloadExport()" class="px-4 py-2 bg-blue-700 hover:bg-blue-600 rounded-lg">Download</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let config = null;
+        let currentTier = 0;
+        let currentCategory = 'all';
+        let editingKey = null;
+
+        // Minecraft item icon URL helper - uses local textures
+        function getItemIcon(itemId) {
+            const name = itemId.replace('minecraft:', '');
+            // Try item folder first, onerror handler will try block folder
+            return `textures/item/${name}.png`;
+        }
+
+        // Fallback icon handler - tries block texture then placeholder
+        function handleIconError(img, itemId) {
+            const name = itemId.replace('minecraft:', '');
+            if (img.src.includes('/item/')) {
+                // Try block folder
+                img.src = `textures/block/${name}.png`;
+            } else {
+                // Final fallback to placeholder
+                img.src = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2232%22 height=%2232%22><rect fill=%22%23333%22 width=%2232%22 height=%2232%22/><text x=%2216%22 y=%2220%22 text-anchor=%22middle%22 fill=%22%23666%22>?</text></svg>';
+            }
+        }
+
+        // Calculate drop chance percentage
+        function calcDropChance(item, tier) {
+            if (!config || !config.items) return 0;
+            const categoryItems = Object.values(config.items).filter(i => i.category === item.category);
+            const totalWeight = categoryItems.reduce((sum, i) => {
+                if (tier >= i.minTier && tier <= i.maxTier && i.maxQuantity[tier] > 0) {
+                    return sum + i.weight;
+                }
+                return sum;
+            }, 0);
+            if (totalWeight === 0) return 0;
+            if (tier < item.minTier || tier > item.maxTier || item.maxQuantity[tier] <= 0) return 0;
+            return ((item.weight / totalWeight) * 100).toFixed(1);
+        }
+
+        // Render items grid
+        function renderItems() {
+            const grid = document.getElementById('itemsGrid');
+            if (!config || !config.items) {
+                grid.innerHTML = '<div class="text-center text-gray-500 col-span-full py-12">No items loaded</div>';
+                return;
+            }
+
+            let html = '';
+            const items = Object.entries(config.items)
+                .filter(([key, item]) => {
+                    if (currentCategory !== 'all' && item.category !== currentCategory) return false;
+                    return true;
+                })
+                .sort((a, b) => b[1].weight - a[1].weight);
+
+            for (const [key, item] of items) {
+                const dropChance = calcDropChance(item, currentTier);
+                const minQty = item.minQuantity[currentTier] || 0;
+                const maxQty = item.maxQuantity[currentTier] || 0;
+                const dropsAtTier = currentTier >= item.minTier && currentTier <= item.maxTier && maxQty > 0;
+
+                const opacity = dropsAtTier ? '' : 'opacity-30';
+                const borderColor = dropsAtTier ? 'border-yellow-900/50' : 'border-gray-800';
+
+                html += `
+                    <div class="bg-black/40 border ${borderColor} rounded-xl p-4 ${opacity} relative group">
+                        <button onclick="deleteItem('${key}')" class="absolute top-2 right-2 text-red-500 opacity-0 group-hover:opacity-100 transition hover:text-red-400">✕</button>
+                        <button onclick="editItem('${key}')" class="absolute top-2 right-8 text-blue-500 opacity-0 group-hover:opacity-100 transition hover:text-blue-400">✎</button>
+
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="${getItemIcon(item.itemId)}" alt="${key}" class="w-10 h-10 item-icon" onerror="handleIconError(this, '${item.itemId}')">
+                            <div>
+                                <div class="font-semibold text-gray-200 text-sm">${key}</div>
+                                <div class="text-xs text-gray-500">${item.category}</div>
+                            </div>
+                        </div>
+
+                        ${dropsAtTier ? `
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div>
+                                    <span class="text-gray-500">Chance:</span>
+                                    <span class="text-yellow-400 font-bold">${dropChance}%</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Qty:</span>
+                                    <span class="text-green-400">${minQty}-${maxQty}</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Weight:</span>
+                                    <span class="text-gray-300">${item.weight}</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Enchant:</span>
+                                    <span class="${item.canEnchant ? 'text-purple-400' : 'text-gray-600'}">${item.canEnchant ? 'Yes' : 'No'}</span>
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="text-xs text-gray-600 text-center py-2">
+                                No drop at Tier ${currentTier}
+                            </div>
+                        `}
+
+                        <div class="mt-2 text-xs text-gray-600">
+                            Tiers ${item.minTier}-${item.maxTier}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (items.length === 0) {
+                html = '<div class="text-center text-gray-500 col-span-full py-12">No items in this category</div>';
+            }
+
+            grid.innerHTML = html;
+        }
+
+        // Render enchantment table
+        function renderEnchantTable() {
+            if (!config || !config.enchantments) return;
+
+            document.getElementById('enchantSection').classList.remove('hidden');
+            const tbody = document.getElementById('enchantTable');
+            const enc = config.enchantments;
+
+            tbody.innerHTML = `
+                <tr class="border-t border-gray-800">
+                    <td class="py-2 text-gray-300">Enchant Chance</td>
+                    ${enc.enchantChance.map((v, i) => `<td class="text-center"><input type="number" step="0.01" min="0" max="1" value="${v}" onchange="updateEnchant('enchantChance', ${i}, this.value)" class="w-12 bg-black/50 border border-gray-700 rounded px-1 py-1 text-center text-xs"></td>`).join('')}
+                </tr>
+                <tr class="border-t border-gray-800">
+                    <td class="py-2 text-gray-300">Min Level %</td>
+                    ${enc.minLevelMultiplier.map((v, i) => `<td class="text-center"><input type="number" step="0.1" min="0" max="1" value="${v}" onchange="updateEnchant('minLevelMultiplier', ${i}, this.value)" class="w-12 bg-black/50 border border-gray-700 rounded px-1 py-1 text-center text-xs"></td>`).join('')}
+                </tr>
+                <tr class="border-t border-gray-800">
+                    <td class="py-2 text-gray-300">Max Level %</td>
+                    ${enc.maxLevelMultiplier.map((v, i) => `<td class="text-center"><input type="number" step="0.1" min="0" max="1" value="${v}" onchange="updateEnchant('maxLevelMultiplier', ${i}, this.value)" class="w-12 bg-black/50 border border-gray-700 rounded px-1 py-1 text-center text-xs"></td>`).join('')}
+                </tr>
+                <tr class="border-t border-gray-800">
+                    <td class="py-2 text-gray-300">Multi-Enchant %</td>
+                    ${enc.multiEnchantChance.map((v, i) => `<td class="text-center"><input type="number" step="0.01" min="0" max="1" value="${v}" onchange="updateEnchant('multiEnchantChance', ${i}, this.value)" class="w-12 bg-black/50 border border-gray-700 rounded px-1 py-1 text-center text-xs"></td>`).join('')}
+                </tr>
+            `;
+        }
+
+        function updateEnchant(field, index, value) {
+            if (config && config.enchantments) {
+                config.enchantments[field][index] = parseFloat(value);
+            }
+        }
+
+        // Tier selection
+        function selectTier(tier) {
+            currentTier = tier;
+            document.querySelectorAll('.tier-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-tier="${tier}"]`).classList.add('active');
+            renderItems();
+        }
+
+        // Category selection
+        function selectCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('bg-yellow-900/30', 'border-yellow-900/50');
+                btn.classList.add('bg-black/40', 'border-gray-700');
+            });
+            const btn = document.querySelector(`[data-cat="${cat}"]`);
+            btn.classList.remove('bg-black/40', 'border-gray-700');
+            btn.classList.add('bg-yellow-900/30', 'border-yellow-900/50');
+            renderItems();
+        }
+
+        // File loading
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        config = JSON.parse(e.target.result);
+                        renderItems();
+                        renderEnchantTable();
+                    } catch (err) {
+                        alert('Error parsing JSON: ' + err.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        // Load default config
+        function loadDefault() {
+            config = getDefaultConfig();
+            renderItems();
+            renderEnchantTable();
+        }
+
+        // Modal functions
+        function showAddModal() {
+            editingKey = null;
+            document.getElementById('modalTitle').textContent = 'Add Item';
+            document.getElementById('itemKey').value = '';
+            document.getElementById('itemKey').disabled = false;
+            document.getElementById('itemId').value = 'minecraft:';
+            document.getElementById('itemCategory').value = 'material';
+            document.getElementById('itemWeight').value = '10';
+            document.getElementById('itemMinTier').value = '0';
+            document.getElementById('itemMaxTier').value = '9';
+            document.getElementById('itemCanEnchant').checked = false;
+            for (let i = 0; i < 10; i++) {
+                document.getElementById(`qty${i}`).value = '1/3';
+            }
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        function editItem(key) {
+            if (!config || !config.items[key]) return;
+            editingKey = key;
+            const item = config.items[key];
+
+            document.getElementById('modalTitle').textContent = 'Edit Item';
+            document.getElementById('itemKey').value = key;
+            document.getElementById('itemKey').disabled = true;
+            document.getElementById('itemId').value = item.itemId;
+            document.getElementById('itemCategory').value = item.category;
+            document.getElementById('itemWeight').value = item.weight;
+            document.getElementById('itemMinTier').value = item.minTier;
+            document.getElementById('itemMaxTier').value = item.maxTier;
+            document.getElementById('itemCanEnchant').checked = item.canEnchant;
+
+            for (let i = 0; i < 10; i++) {
+                const min = item.minQuantity[i] || 0;
+                const max = item.maxQuantity[i] || 0;
+                document.getElementById(`qty${i}`).value = max === 0 ? '0' : `${min}/${max}`;
+            }
+
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+            editingKey = null;
+        }
+
+        function saveItem() {
+            const key = document.getElementById('itemKey').value.trim();
+            if (!key) {
+                alert('Item key is required');
+                return;
+            }
+
+            if (!config) config = { items: {}, enchantments: getDefaultConfig().enchantments };
+            if (!config.items) config.items = {};
+
+            const minQty = [];
+            const maxQty = [];
+            for (let i = 0; i < 10; i++) {
+                const val = document.getElementById(`qty${i}`).value.trim();
+                if (val === '0' || val === '') {
+                    minQty.push(0);
+                    maxQty.push(0);
+                } else if (val.includes('/')) {
+                    const parts = val.split('/');
+                    minQty.push(parseInt(parts[0]) || 0);
+                    maxQty.push(parseInt(parts[1]) || 0);
+                } else {
+                    const num = parseInt(val) || 0;
+                    minQty.push(num);
+                    maxQty.push(num);
+                }
+            }
+
+            config.items[key] = {
+                itemId: document.getElementById('itemId').value,
+                category: document.getElementById('itemCategory').value,
+                weight: parseInt(document.getElementById('itemWeight').value) || 10,
+                minTier: parseInt(document.getElementById('itemMinTier').value) || 0,
+                maxTier: parseInt(document.getElementById('itemMaxTier').value) || 9,
+                canEnchant: document.getElementById('itemCanEnchant').checked,
+                minQuantity: minQty,
+                maxQuantity: maxQty
+            };
+
+            closeModal();
+            renderItems();
+        }
+
+        function deleteItem(key) {
+            if (confirm(`Delete "${key}"?`)) {
+                delete config.items[key];
+                renderItems();
+            }
+        }
+
+        // Export functions
+        function exportConfig() {
+            if (!config) {
+                alert('No config loaded');
+                return;
+            }
+            document.getElementById('exportText').value = JSON.stringify(config, null, 2);
+            document.getElementById('exportModal').classList.remove('hidden');
+        }
+
+        function closeExportModal() {
+            document.getElementById('exportModal').classList.add('hidden');
+        }
+
+        function copyExport() {
+            const text = document.getElementById('exportText').value;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard!');
+            });
+        }
+
+        function downloadExport() {
+            const text = document.getElementById('exportText').value;
+            const blob = new Blob([text], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'loot.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Default config
+        function getDefaultConfig() {
+            return {
+                "items": {
+                    "iron_nugget": {"itemId": "minecraft:iron_nugget", "category": "material", "weight": 15, "minTier": 0, "maxTier": 4, "canEnchant": false, "minQuantity": [1,2,3,4,5,0,0,0,0,0], "maxQuantity": [3,5,7,9,10,0,0,0,0,0]},
+                    "gold_nugget": {"itemId": "minecraft:gold_nugget", "category": "material", "weight": 12, "minTier": 0, "maxTier": 4, "canEnchant": false, "minQuantity": [1,1,2,3,4,0,0,0,0,0], "maxQuantity": [2,3,5,6,8,0,0,0,0,0]},
+                    "iron_ingot": {"itemId": "minecraft:iron_ingot", "category": "material", "weight": 12, "minTier": 1, "maxTier": 9, "canEnchant": false, "minQuantity": [0,1,2,2,3,3,4,5,6,8], "maxQuantity": [0,3,4,5,6,8,10,12,15,20]},
+                    "gold_ingot": {"itemId": "minecraft:gold_ingot", "category": "material", "weight": 10, "minTier": 1, "maxTier": 9, "canEnchant": false, "minQuantity": [0,1,1,2,2,3,3,4,5,6], "maxQuantity": [0,2,3,4,5,6,8,10,12,15]},
+                    "diamond": {"itemId": "minecraft:diamond", "category": "material", "weight": 5, "minTier": 4, "maxTier": 9, "canEnchant": false, "minQuantity": [0,0,0,0,1,1,1,2,2,3], "maxQuantity": [0,0,0,0,1,2,3,4,5,6]},
+                    "emerald": {"itemId": "minecraft:emerald", "category": "material", "weight": 6, "minTier": 3, "maxTier": 9, "canEnchant": false, "minQuantity": [0,0,0,1,1,2,2,3,4,5], "maxQuantity": [0,0,0,2,3,4,5,6,8,10]},
+                    "netherite_scrap": {"itemId": "minecraft:netherite_scrap", "category": "material", "weight": 2, "minTier": 7, "maxTier": 9, "canEnchant": false, "minQuantity": [0,0,0,0,0,0,0,1,1,1], "maxQuantity": [0,0,0,0,0,0,0,1,2,3]},
+                    "bread": {"itemId": "minecraft:bread", "category": "food", "weight": 12, "minTier": 0, "maxTier": 5, "canEnchant": false, "minQuantity": [1,2,3,4,5,6,0,0,0,0], "maxQuantity": [3,5,7,9,12,15,0,0,0,0]},
+                    "golden_apple": {"itemId": "minecraft:golden_apple", "category": "food", "weight": 4, "minTier": 3, "maxTier": 9, "canEnchant": false, "minQuantity": [0,0,0,1,1,1,1,2,2,3], "maxQuantity": [0,0,0,1,2,2,3,3,4,5]},
+                    "enchanted_golden_apple": {"itemId": "minecraft:enchanted_golden_apple", "category": "food", "weight": 1, "minTier": 6, "maxTier": 9, "canEnchant": false, "minQuantity": [0,0,0,0,0,0,1,1,1,1], "maxQuantity": [0,0,0,0,0,0,1,1,1,2]},
+                    "iron_sword": {"itemId": "minecraft:iron_sword", "category": "gear", "weight": 10, "minTier": 2, "maxTier": 6, "canEnchant": true, "minQuantity": [0,0,1,1,1,1,1,0,0,0], "maxQuantity": [0,0,1,1,1,1,1,0,0,0]},
+                    "diamond_sword": {"itemId": "minecraft:diamond_sword", "category": "gear", "weight": 5, "minTier": 5, "maxTier": 9, "canEnchant": true, "minQuantity": [0,0,0,0,0,1,1,1,1,1], "maxQuantity": [0,0,0,0,0,1,1,1,1,1]},
+                    "iron_pickaxe": {"itemId": "minecraft:iron_pickaxe", "category": "gear", "weight": 10, "minTier": 2, "maxTier": 6, "canEnchant": true, "minQuantity": [0,0,1,1,1,1,1,0,0,0], "maxQuantity": [0,0,1,1,1,1,1,0,0,0]},
+                    "diamond_pickaxe": {"itemId": "minecraft:diamond_pickaxe", "category": "gear", "weight": 4, "minTier": 5, "maxTier": 9, "canEnchant": true, "minQuantity": [0,0,0,0,0,1,1,1,1,1], "maxQuantity": [0,0,0,0,0,1,1,1,1,1]},
+                    "iron_chestplate": {"itemId": "minecraft:iron_chestplate", "category": "gear", "weight": 6, "minTier": 2, "maxTier": 6, "canEnchant": true, "minQuantity": [0,0,1,1,1,1,1,0,0,0], "maxQuantity": [0,0,1,1,1,1,1,0,0,0]},
+                    "diamond_chestplate": {"itemId": "minecraft:diamond_chestplate", "category": "gear", "weight": 3, "minTier": 5, "maxTier": 9, "canEnchant": true, "minQuantity": [0,0,0,0,0,1,1,1,1,1], "maxQuantity": [0,0,0,0,0,1,1,1,1,1]},
+                    "bow": {"itemId": "minecraft:bow", "category": "gear", "weight": 8, "minTier": 1, "maxTier": 7, "canEnchant": true, "minQuantity": [0,1,1,1,1,1,1,1,0,0], "maxQuantity": [0,1,1,1,1,1,1,1,0,0]},
+                    "shield": {"itemId": "minecraft:shield", "category": "gear", "weight": 6, "minTier": 1, "maxTier": 7, "canEnchant": false, "minQuantity": [0,1,1,1,1,1,1,1,0,0], "maxQuantity": [0,1,1,1,1,1,1,1,0,0]},
+                    "enchanted_book": {"itemId": "minecraft:enchanted_book", "category": "book", "weight": 10, "minTier": 0, "maxTier": 9, "canEnchant": true, "minQuantity": [1,1,1,1,1,1,1,1,1,1], "maxQuantity": [1,1,1,1,1,2,2,2,3,3]}
+                },
+                "enchantments": {
+                    "enchantChance": [0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+                    "minLevelMultiplier": [0.0, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+                    "maxLevelMultiplier": [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.0, 1.0],
+                    "multiEnchantChance": [0.0, 0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5]
+                },
+                "materialPoolRolls": [1, 1, 1, 2, 2, 2, 2, 3, 3, 3],
+                "gearPoolRolls": [0, 0, 1, 1, 1, 1, 2, 2, 2, 2],
+                "bookPoolRolls": [0, 0, 0, 1, 1, 1, 1, 1, 1, 1]
+            };
+        }
+
+        // Initialize
+        selectTier(0);
+    </script>
+</body>
+</html>

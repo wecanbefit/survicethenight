@@ -12,17 +12,19 @@ public interface IDurabilityProvider {
 
     /**
      * Check if a block position is being tracked for durability.
+     * @param world the world
      * @param pos block position
      * @return true if tracked
      */
-    boolean isTracked(BlockPos pos);
+    boolean isTracked(World world, BlockPos pos);
 
     /**
      * Get the current durability of a block.
+     * @param world the world
      * @param pos block position
      * @return current durability, or -1 if not tracked
      */
-    int getDurability(BlockPos pos);
+    int getDurability(World world, BlockPos pos);
 
     /**
      * Get the maximum durability of a block.
@@ -42,26 +44,29 @@ public interface IDurabilityProvider {
 
     /**
      * Damage a block's durability.
+     * @param world the world
      * @param pos block position
      * @param damage amount of damage
      * @return true if block should break
      */
-    boolean damageBlock(BlockPos pos, int damage);
+    boolean damageBlock(World world, BlockPos pos, int damage);
 
     /**
      * Repair a block's durability.
+     * @param world the world
      * @param pos block position
      * @param amount amount to repair
      * @return true if repair was successful
      */
-    boolean repairBlock(BlockPos pos, int amount);
+    boolean repairBlock(World world, BlockPos pos, int amount);
 
     /**
      * Fully repair a block's durability.
+     * @param world the world
      * @param pos block position
      * @return true if repair was successful
      */
-    boolean fullyRepairBlock(BlockPos pos);
+    boolean fullyRepairBlock(World world, BlockPos pos);
 
     /**
      * Start tracking a block for durability.
@@ -72,7 +77,8 @@ public interface IDurabilityProvider {
 
     /**
      * Stop tracking a block.
+     * @param world the world
      * @param pos block position
      */
-    void untrackBlock(BlockPos pos);
+    void untrackBlock(World world, BlockPos pos);
 }

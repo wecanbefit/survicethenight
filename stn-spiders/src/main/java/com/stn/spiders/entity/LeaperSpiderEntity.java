@@ -8,6 +8,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.World;
 
@@ -25,10 +26,10 @@ public class LeaperSpiderEntity extends SpiderEntity {
 
     public static DefaultAttributeContainer.Builder createLeaperAttributes() {
         return HostileEntity.createHostileAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, STNSpidersConfig.LEAPER_HEALTH)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, STNSpidersConfig.LEAPER_SPEED)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, STNSpidersConfig.LEAPER_DAMAGE)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
+            .add(EntityAttributes.MAX_HEALTH, STNSpidersConfig.LEAPER_HEALTH)
+            .add(EntityAttributes.MOVEMENT_SPEED, STNSpidersConfig.LEAPER_SPEED)
+            .add(EntityAttributes.ATTACK_DAMAGE, STNSpidersConfig.LEAPER_DAMAGE)
+            .add(EntityAttributes.FOLLOW_RANGE, 32.0);
     }
 
     @Override
@@ -77,15 +78,13 @@ public class LeaperSpiderEntity extends SpiderEntity {
             this.playSound(SoundEvents.ENTITY_SPIDER_AMBIENT, 1.0f, 1.5f);
 
             // Leap particles
-            for (int i = 0; i < 8; i++) {
-                this.getWorld().addParticle(
+            if (this.getWorld() instanceof ServerWorld sw) {
+                sw.spawnParticles(
                     ParticleTypes.POOF,
                     this.getX(),
                     this.getY(),
                     this.getZ(),
-                    this.random.nextGaussian() * 0.1,
-                    0.1,
-                    this.random.nextGaussian() * 0.1
+                    8, 0.2, 0.1, 0.2, 0.1
                 );
             }
         }

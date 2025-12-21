@@ -30,11 +30,11 @@ public class ZombabieEntity extends ZombieEntity {
 
     public static DefaultAttributeContainer.Builder createZombabieAttributes() {
         return ZombieEntity.createZombieAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, STNZombiesConfig.ZOMBABIE_HEALTH)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, STNZombiesConfig.ZOMBABIE_SPEED)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, STNZombiesConfig.ZOMBABIE_DAMAGE)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
-            .add(EntityAttributes.GENERIC_ARMOR, 0.0);
+            .add(EntityAttributes.MAX_HEALTH, STNZombiesConfig.ZOMBABIE_HEALTH)
+            .add(EntityAttributes.MOVEMENT_SPEED, STNZombiesConfig.ZOMBABIE_SPEED)
+            .add(EntityAttributes.ATTACK_DAMAGE, STNZombiesConfig.ZOMBABIE_DAMAGE)
+            .add(EntityAttributes.FOLLOW_RANGE, 32.0)
+            .add(EntityAttributes.ARMOR, 0.0);
     }
 
     @Override

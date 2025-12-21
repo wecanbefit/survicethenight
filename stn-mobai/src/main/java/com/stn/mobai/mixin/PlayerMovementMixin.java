@@ -30,8 +30,8 @@ public abstract class PlayerMovementMixin extends PlayerEntity {
     @Unique
     private double stn_lastZ = 0;
 
-    public PlayerMovementMixin(World world, net.minecraft.util.math.BlockPos pos, float yaw, com.mojang.authlib.GameProfile gameProfile) {
-        super(world, pos, yaw, gameProfile);
+    public PlayerMovementMixin(World world, com.mojang.authlib.GameProfile gameProfile) {
+        super(world, gameProfile);
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
@@ -42,7 +42,9 @@ public abstract class PlayerMovementMixin extends PlayerEntity {
         }
 
         ServerPlayerEntity self = (ServerPlayerEntity) (Object) this;
-        ServerWorld world = self.getServerWorld();
+        if (!(self.getWorld() instanceof ServerWorld world)) {
+            return;
+        }
 
         // Calculate horizontal movement
         double dx = self.getX() - stn_lastX;

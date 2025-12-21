@@ -28,12 +28,12 @@ public class BroodmotherSpiderEntity extends SpiderEntity {
 
     public static DefaultAttributeContainer.Builder createBroodmotherAttributes() {
         return HostileEntity.createHostileAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, STNSpidersConfig.BROODMOTHER_HEALTH)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, STNSpidersConfig.BROODMOTHER_SPEED)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, STNSpidersConfig.BROODMOTHER_DAMAGE)
-            .add(EntityAttributes.GENERIC_ARMOR, STNSpidersConfig.BROODMOTHER_ARMOR)
-            .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.5)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
+            .add(EntityAttributes.MAX_HEALTH, STNSpidersConfig.BROODMOTHER_HEALTH)
+            .add(EntityAttributes.MOVEMENT_SPEED, STNSpidersConfig.BROODMOTHER_SPEED)
+            .add(EntityAttributes.ATTACK_DAMAGE, STNSpidersConfig.BROODMOTHER_DAMAGE)
+            .add(EntityAttributes.ARMOR, STNSpidersConfig.BROODMOTHER_ARMOR)
+            .add(EntityAttributes.KNOCKBACK_RESISTANCE, 0.5)
+            .add(EntityAttributes.FOLLOW_RANGE, 32.0);
     }
 
     @Override
@@ -53,13 +53,15 @@ public class BroodmotherSpiderEntity extends SpiderEntity {
 
             // Building up spawn particles
             if (spawnCooldown > 0 && spawnCooldown <= 40 && this.random.nextInt(3) == 0) {
-                this.getWorld().addParticle(
-                    ParticleTypes.ITEM_SNOWBALL,
-                    this.getX() + this.random.nextGaussian() * 0.5,
-                    this.getY() + 0.3,
-                    this.getZ() + this.random.nextGaussian() * 0.5,
-                    0, 0.05, 0
-                );
+                if (this.getWorld() instanceof ServerWorld sw) {
+                    sw.spawnParticles(
+                        ParticleTypes.ITEM_SNOWBALL,
+                        this.getX(),
+                        this.getY() + 0.3,
+                        this.getZ(),
+                        1, 0.5, 0, 0.5, 0.05
+                    );
+                }
             }
         }
 
@@ -75,7 +77,7 @@ public class BroodmotherSpiderEntity extends SpiderEntity {
         if (!(this.getWorld() instanceof ServerWorld serverWorld)) return;
 
         // Spawn a cave spider as spiderling (smaller)
-        CaveSpiderEntity spiderling = EntityType.CAVE_SPIDER.create(serverWorld);
+        CaveSpiderEntity spiderling = EntityType.CAVE_SPIDER.create(serverWorld, SpawnReason.MOB_SUMMONED);
         if (spiderling == null) return;
 
         // Position near the broodmother
@@ -97,15 +99,13 @@ public class BroodmotherSpiderEntity extends SpiderEntity {
         // Spawn effects
         this.playSound(SoundEvents.ENTITY_SPIDER_AMBIENT, 1.0f, 1.5f);
 
-        for (int i = 0; i < 10; i++) {
-            this.getWorld().addParticle(
-                ParticleTypes.POOF,
-                spiderling.getX() + this.random.nextGaussian() * 0.3,
-                spiderling.getY() + 0.2,
-                spiderling.getZ() + this.random.nextGaussian() * 0.3,
-                0, 0.1, 0
-            );
-        }
+        serverWorld.spawnParticles(
+            ParticleTypes.POOF,
+            spiderling.getX(),
+            spiderling.getY() + 0.2,
+            spiderling.getZ(),
+            10, 0.3, 0.2, 0.3, 0.1
+        );
     }
 
     @Override
@@ -115,7 +115,7 @@ public class BroodmotherSpiderEntity extends SpiderEntity {
         // Death burst of spiderlings
         if (!this.getWorld().isClient() && this.getWorld() instanceof ServerWorld serverWorld) {
             for (int i = 0; i < 3; i++) {
-                CaveSpiderEntity spiderling = EntityType.CAVE_SPIDER.create(serverWorld);
+                CaveSpiderEntity spiderling = EntityType.CAVE_SPIDER.create(serverWorld, SpawnReason.MOB_SUMMONED);
                 if (spiderling != null) {
                     double offsetX = this.random.nextGaussian() * 2.0;
                     double offsetZ = this.random.nextGaussian() * 2.0;

@@ -130,7 +130,7 @@ public class SenseDebugger {
      * Send debug info about player's current environment.
      */
     public static void sendEnvironmentInfo(ServerPlayerEntity player) {
-        ServerWorld world = player.getServerWorld();
+        ServerWorld world = (ServerWorld) player.getWorld();
         BlockPos pos = player.getBlockPos();
 
         // Count nearby light sources

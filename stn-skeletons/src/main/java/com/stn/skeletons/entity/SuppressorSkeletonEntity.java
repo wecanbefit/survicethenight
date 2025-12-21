@@ -51,9 +51,9 @@ public class SuppressorSkeletonEntity extends SkeletonEntity {
 
     public static DefaultAttributeContainer.Builder createSuppressorAttributes() {
         return HostileEntity.createHostileAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, STNSkeletonsConfig.SUPPRESSOR_HEALTH)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, STNSkeletonsConfig.SUPPRESSOR_SPEED)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
+            .add(EntityAttributes.MAX_HEALTH, STNSkeletonsConfig.SUPPRESSOR_HEALTH)
+            .add(EntityAttributes.MOVEMENT_SPEED, STNSkeletonsConfig.SUPPRESSOR_SPEED)
+            .add(EntityAttributes.FOLLOW_RANGE, 32.0);
     }
 
     @Override

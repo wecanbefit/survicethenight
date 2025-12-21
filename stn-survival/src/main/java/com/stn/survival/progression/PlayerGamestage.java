@@ -23,17 +23,33 @@ public class PlayerGamestage {
 
     /**
      * Calculate the player's current gamestage.
-     * Formula: (Days * 2) + (Kills / 50) + (Survival Nights * 5) - (Deaths * 2)
+     *
+     * Time-based progression (cannot be reduced by deaths):
+     *   - Each night survived: +0.15 gamestage
+     *   - Each survival night event: +2.0 gamestage
+     *
+     * Kill bonus (can be reduced by deaths):
+     *   - Each zombie kill: +0.005 gamestage (200 kills = 1 gamestage)
+     *
+     * Death penalty:
+     *   - Each death: -2.0 gamestage (only reduces kill bonus, floor is time-based gamestage)
      */
     public int calculateGamestage() {
-        int gamestage = 0;
+        // Time-based gamestage (protected floor - deaths cannot reduce below this)
+        double timeBasedGamestage = (daysSurvived * STNSurvivalConfig.GAMESTAGE_PER_NIGHT)
+                + (survivalNightsSurvived * STNSurvivalConfig.GAMESTAGE_SURVIVAL_NIGHT_BONUS);
 
-        gamestage += daysSurvived * STNSurvivalConfig.GAMESTAGE_DAYS_MULTIPLIER;
-        gamestage += zombieKills / STNSurvivalConfig.GAMESTAGE_ZOMBIE_KILLS_DIVISOR;
-        gamestage += survivalNightsSurvived * STNSurvivalConfig.GAMESTAGE_SURVIVAL_NIGHT_BONUS;
-        gamestage -= deathCount * STNSurvivalConfig.GAMESTAGE_DEATH_PENALTY;
+        // Kill bonus (can be reduced by deaths)
+        double killBonus = zombieKills * STNSurvivalConfig.GAMESTAGE_PER_ZOMBIE_KILL;
 
-        return Math.max(0, gamestage);
+        // Death penalty only affects kill bonus
+        double deathPenalty = deathCount * STNSurvivalConfig.GAMESTAGE_DEATH_PENALTY;
+        double effectiveKillBonus = Math.max(0, killBonus - deathPenalty);
+
+        // Total gamestage = floor (time-based) + effective kill bonus
+        double totalGamestage = timeBasedGamestage + effectiveKillBonus;
+
+        return (int) Math.floor(totalGamestage);
     }
 
     public void incrementDaysSurvived() {

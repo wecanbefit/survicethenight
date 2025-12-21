@@ -6,11 +6,9 @@ import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -57,9 +55,9 @@ public class SpikeBlock extends Block {
         return SHAPE;
     }
 
-    @Override
-    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-        if (world.isClient()) {
+    // Called when entity collides with block
+    protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+        if (world.isClient() || !(world instanceof ServerWorld serverWorld)) {
             return;
         }
 
@@ -70,9 +68,7 @@ public class SpikeBlock extends Block {
             }
 
             // Damage the entity
-            DamageSource damageSource = new DamageSource(
-                world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DamageTypes.CACTUS)
-            );
+            DamageSource damageSource = serverWorld.getDamageSources().cactus();
 
             // Hostile entities take more damage from spikes
             float damage = spikeDamage;
@@ -80,25 +76,23 @@ public class SpikeBlock extends Block {
                 damage *= 1.5f;
             }
 
-            livingEntity.damage(damageSource, damage);
+            livingEntity.damage(serverWorld, damageSource, damage);
 
             // Slow the entity
             livingEntity.setVelocity(
                 livingEntity.getVelocity().multiply(0.5, 1.0, 0.5)
             );
 
-            // Visual and sound effects
-            if (world instanceof ServerWorld serverWorld) {
-                serverWorld.spawnParticles(
-                    ParticleTypes.DAMAGE_INDICATOR,
-                    entity.getX(),
-                    entity.getY() + 0.5,
-                    entity.getZ(),
-                    3,
-                    0.2, 0.2, 0.2,
-                    0.1
-                );
-            }
+            // Visual effects
+            serverWorld.spawnParticles(
+                ParticleTypes.DAMAGE_INDICATOR,
+                entity.getX(),
+                entity.getY() + 0.5,
+                entity.getZ(),
+                3,
+                0.2, 0.2, 0.2,
+                0.1
+            );
 
             world.playSound(
                 null,

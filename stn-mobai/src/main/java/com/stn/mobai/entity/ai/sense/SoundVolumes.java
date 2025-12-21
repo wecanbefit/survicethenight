@@ -170,7 +170,9 @@ public class SoundVolumes {
         float maxMultiplier = ARMOR_NONE;
         int swiftSneakLevel = 0;
 
-        for (net.minecraft.item.ItemStack stack : player.getArmorItems()) {
+        for (net.minecraft.entity.EquipmentSlot slot : net.minecraft.entity.EquipmentSlot.values()) {
+            if (slot.getType() != net.minecraft.entity.EquipmentSlot.Type.HUMANOID_ARMOR) continue;
+            net.minecraft.item.ItemStack stack = player.getEquippedStack(slot);
             if (stack.isEmpty()) continue;
 
             // Get item ID and check material by name

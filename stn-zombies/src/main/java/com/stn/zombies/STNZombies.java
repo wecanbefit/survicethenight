@@ -3,8 +3,10 @@ package com.stn.zombies;
 import com.stn.survival.spawn.HordeMobRegistry;
 import com.stn.survival.spawn.MobCategory;
 import com.stn.zombies.config.STNZombiesConfig;
+import com.stn.zombies.entity.PlagueZombieEntity;
 import com.stn.zombies.registry.STNZombieEntities;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +30,11 @@ public class STNZombies implements ModInitializer {
 
         // Register with horde spawn system
         registerHordeMobs();
+
+        // Clean up plague stacks when player disconnects to prevent memory leak
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            PlagueZombieEntity.clearPlagueStacks(handler.player.getUuid());
+        });
 
         LOGGER.info("Survive The Night - Zombies initialized!");
     }

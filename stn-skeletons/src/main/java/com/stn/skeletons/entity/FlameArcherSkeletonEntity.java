@@ -15,6 +15,7 @@ import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.World;
@@ -48,9 +49,9 @@ public class FlameArcherSkeletonEntity extends SkeletonEntity {
 
     public static DefaultAttributeContainer.Builder createFlameArcherAttributes() {
         return HostileEntity.createHostileAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, STNSkeletonsConfig.FLAME_ARCHER_HEALTH)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, STNSkeletonsConfig.FLAME_ARCHER_SPEED)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
+            .add(EntityAttributes.MAX_HEALTH, STNSkeletonsConfig.FLAME_ARCHER_HEALTH)
+            .add(EntityAttributes.MOVEMENT_SPEED, STNSkeletonsConfig.FLAME_ARCHER_SPEED)
+            .add(EntityAttributes.FOLLOW_RANGE, 32.0);
     }
 
     @Override
@@ -62,13 +63,13 @@ public class FlameArcherSkeletonEntity extends SkeletonEntity {
         }
 
         // Flame particles around the skeleton
-        if (this.random.nextInt(10) == 0) {
-            this.getWorld().addParticle(
+        if (this.random.nextInt(10) == 0 && this.getWorld() instanceof ServerWorld sw) {
+            sw.spawnParticles(
                 ParticleTypes.FLAME,
-                this.getX() + this.random.nextGaussian() * 0.2,
+                this.getX(),
                 this.getY() + 1.5,
-                this.getZ() + this.random.nextGaussian() * 0.2,
-                0, 0.02, 0
+                this.getZ(),
+                1, 0.2, 0, 0.2, 0.02
             );
         }
 

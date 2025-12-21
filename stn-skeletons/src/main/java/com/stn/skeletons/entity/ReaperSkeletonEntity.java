@@ -20,6 +20,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.World;
@@ -48,21 +49,18 @@ public class ReaperSkeletonEntity extends WitherSkeletonEntity implements BlockB
         this.goalSelector.add(6, new LookAroundGoal(this));
 
         this.targetSelector.add(1, new RevengeGoal(this));
-        // Prioritize low health targets
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, 10, true, false,
-            entity -> entity instanceof LivingEntity living &&
-                living.getHealth() / living.getMaxHealth() <= STNSkeletonsConfig.REAPER_LOW_HEALTH_THRESHOLD));
-        this.targetSelector.add(3, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
-        this.targetSelector.add(4, new ActiveTargetGoal<>(this, IronGolemEntity.class, true));
-        this.targetSelector.add(4, new ActiveTargetGoal<>(this, TurtleEntity.class, 10, true, false, TurtleEntity.BABY_TURTLE_ON_LAND_FILTER));
+        // Target players (will prefer low health in tryAttack)
+        this.targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+        this.targetSelector.add(3, new ActiveTargetGoal<>(this, IronGolemEntity.class, true));
+        this.targetSelector.add(3, new ActiveTargetGoal<>(this, TurtleEntity.class, 10, true, false, TurtleEntity.BABY_TURTLE_ON_LAND_FILTER));
     }
 
     public static DefaultAttributeContainer.Builder createReaperAttributes() {
         return HostileEntity.createHostileAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, STNSkeletonsConfig.REAPER_HEALTH)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, STNSkeletonsConfig.REAPER_SPEED)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, STNSkeletonsConfig.REAPER_DAMAGE)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
+            .add(EntityAttributes.MAX_HEALTH, STNSkeletonsConfig.REAPER_HEALTH)
+            .add(EntityAttributes.MOVEMENT_SPEED, STNSkeletonsConfig.REAPER_SPEED)
+            .add(EntityAttributes.ATTACK_DAMAGE, STNSkeletonsConfig.REAPER_DAMAGE)
+            .add(EntityAttributes.FOLLOW_RANGE, 32.0);
     }
 
     @Override
@@ -70,30 +68,30 @@ public class ReaperSkeletonEntity extends WitherSkeletonEntity implements BlockB
         super.tickMovement();
 
         // Dark particles around the reaper
-        if (this.random.nextInt(8) == 0) {
-            this.getWorld().addParticle(
+        if (this.random.nextInt(8) == 0 && this.getWorld() instanceof ServerWorld sw) {
+            sw.spawnParticles(
                 ParticleTypes.SMOKE,
-                this.getX() + this.random.nextGaussian() * 0.3,
-                this.getY() + 1.0 + this.random.nextDouble(),
-                this.getZ() + this.random.nextGaussian() * 0.3,
-                0, 0.02, 0
+                this.getX(),
+                this.getY() + 1.5,
+                this.getZ(),
+                1, 0.3, 0.5, 0.3, 0.02
             );
         }
 
         // Target low health indicator
-        if (!this.getWorld().isClient() && this.getTarget() != null) {
+        if (this.getWorld() instanceof ServerWorld sw && this.getTarget() != null) {
             LivingEntity target = this.getTarget();
             float healthPercent = target.getHealth() / target.getMaxHealth();
 
             if (healthPercent <= STNSkeletonsConfig.REAPER_LOW_HEALTH_THRESHOLD) {
                 // Execute particles - show the reaper is targeting them
                 if (this.random.nextInt(5) == 0) {
-                    this.getWorld().addParticle(
+                    sw.spawnParticles(
                         ParticleTypes.ANGRY_VILLAGER,
                         this.getX(),
                         this.getY() + 2.2,
                         this.getZ(),
-                        0, 0, 0
+                        1, 0, 0, 0, 0
                     );
                 }
             }
@@ -101,54 +99,47 @@ public class ReaperSkeletonEntity extends WitherSkeletonEntity implements BlockB
     }
 
     @Override
-    public boolean tryAttack(Entity target) {
+    public boolean tryAttack(ServerWorld world, Entity target) {
         if (target instanceof LivingEntity living) {
             float healthPercent = living.getHealth() / living.getMaxHealth();
             boolean isLowHealth = healthPercent <= STNSkeletonsConfig.REAPER_LOW_HEALTH_THRESHOLD;
 
             // Store original damage
-            double originalDamage = this.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+            double originalDamage = this.getAttributeValue(EntityAttributes.ATTACK_DAMAGE);
 
-            // Temporarily boost damage for low health targets
-            if (isLowHealth) {
-                // We'll apply bonus damage manually since we can't easily modify attribute mid-attack
-            }
+            boolean hit = super.tryAttack(world, target);
 
-            boolean hit = super.tryAttack(target);
-
-            if (hit && !this.getWorld().isClient()) {
+            if (hit) {
                 // Apply execute bonus damage
                 if (isLowHealth) {
                     float bonusDamage = (float) (originalDamage * (STNSkeletonsConfig.REAPER_EXECUTE_DAMAGE_MULTIPLIER - 1.0));
-                    living.damage(this.getDamageSources().mobAttack(this), bonusDamage);
+                    living.damage(world, this.getDamageSources().mobAttack(this), bonusDamage);
 
                     // Execute visual
                     this.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_CRIT, 1.0f, 0.8f);
 
-                    for (int i = 0; i < 10; i++) {
-                        target.getWorld().addParticle(
-                            ParticleTypes.CRIT,
-                            target.getX() + this.random.nextGaussian() * 0.5,
-                            target.getY() + 1.0,
-                            target.getZ() + this.random.nextGaussian() * 0.5,
-                            0, 0.2, 0
-                        );
-                    }
+                    world.spawnParticles(
+                        ParticleTypes.CRIT,
+                        target.getX(),
+                        target.getY() + 1.0,
+                        target.getZ(),
+                        10, 0.5, 0.5, 0.5, 0.2
+                    );
                 }
 
                 // Check if we killed the target
                 if (living.isDead() || living.getHealth() <= 0) {
-                    onKill(living);
+                    onKill(world, living);
                 }
             }
 
             return hit;
         }
 
-        return super.tryAttack(target);
+        return super.tryAttack(world, target);
     }
 
-    private void onKill(LivingEntity victim) {
+    private void onKill(ServerWorld world, LivingEntity victim) {
         // Speed boost after kill
         this.addStatusEffect(new StatusEffectInstance(
             StatusEffects.SPEED,
@@ -162,17 +153,13 @@ public class ReaperSkeletonEntity extends WitherSkeletonEntity implements BlockB
         this.playSound(SoundEvents.ENTITY_WITHER_SKELETON_AMBIENT, 1.0f, 0.8f);
 
         // Death particles burst
-        for (int i = 0; i < 15; i++) {
-            this.getWorld().addParticle(
-                ParticleTypes.SOUL,
-                victim.getX() + this.random.nextGaussian() * 0.5,
-                victim.getY() + 1.0,
-                victim.getZ() + this.random.nextGaussian() * 0.5,
-                this.random.nextGaussian() * 0.1,
-                0.2,
-                this.random.nextGaussian() * 0.1
-            );
-        }
+        world.spawnParticles(
+            ParticleTypes.SOUL,
+            victim.getX(),
+            victim.getY() + 1.0,
+            victim.getZ(),
+            15, 0.5, 0.5, 0.5, 0.2
+        );
     }
 
     @Override

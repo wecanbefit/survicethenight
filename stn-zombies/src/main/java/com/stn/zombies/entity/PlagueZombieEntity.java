@@ -12,6 +12,7 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 
 import java.util.HashMap;
@@ -35,11 +36,11 @@ public class PlagueZombieEntity extends ZombieEntity implements BlockBreakAnimat
 
     public static DefaultAttributeContainer.Builder createPlagueAttributes() {
         return ZombieEntity.createZombieAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, STNZombiesConfig.PLAGUE_HEALTH)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, STNZombiesConfig.PLAGUE_SPEED)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, STNZombiesConfig.PLAGUE_DAMAGE)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
-            .add(EntityAttributes.GENERIC_ARMOR, 0.0);
+            .add(EntityAttributes.MAX_HEALTH, STNZombiesConfig.PLAGUE_HEALTH)
+            .add(EntityAttributes.MOVEMENT_SPEED, STNZombiesConfig.PLAGUE_SPEED)
+            .add(EntityAttributes.ATTACK_DAMAGE, STNZombiesConfig.PLAGUE_DAMAGE)
+            .add(EntityAttributes.FOLLOW_RANGE, 32.0)
+            .add(EntityAttributes.ARMOR, 0.0);
     }
 
     @Override
@@ -47,20 +48,20 @@ public class PlagueZombieEntity extends ZombieEntity implements BlockBreakAnimat
         super.tickMovement();
 
         // Drip poison particles
-        if (!this.getWorld().isClient() && this.random.nextInt(10) == 0) {
-            this.getWorld().addParticle(
+        if (this.getWorld() instanceof ServerWorld sw && this.random.nextInt(10) == 0) {
+            sw.spawnParticles(
                 ParticleTypes.FALLING_SPORE_BLOSSOM,
-                this.getX() + this.random.nextGaussian() * 0.3,
+                this.getX(),
                 this.getY() + 1.0,
-                this.getZ() + this.random.nextGaussian() * 0.3,
-                0, -0.05, 0
+                this.getZ(),
+                1, 0.3, 0, 0.3, 0
             );
         }
     }
 
     @Override
-    public boolean tryAttack(Entity target) {
-        boolean hit = super.tryAttack(target);
+    public boolean tryAttack(ServerWorld world, Entity target) {
+        boolean hit = super.tryAttack(world, target);
 
         if (hit && target instanceof PlayerEntity player) {
             applyPlague(player);
@@ -135,13 +136,13 @@ public class PlagueZombieEntity extends ZombieEntity implements BlockBreakAnimat
         }
 
         // Visual feedback
-        for (int i = 0; i < currentStacks * 2; i++) {
-            player.getWorld().addParticle(
+        if (player.getWorld() instanceof ServerWorld sw) {
+            sw.spawnParticles(
                 ParticleTypes.SPORE_BLOSSOM_AIR,
-                player.getX() + this.random.nextGaussian() * 0.5,
+                player.getX(),
                 player.getY() + 1.0,
-                player.getZ() + this.random.nextGaussian() * 0.5,
-                0, 0.1, 0
+                player.getZ(),
+                currentStacks * 2, 0.5, 0.3, 0.5, 0.1
             );
         }
     }

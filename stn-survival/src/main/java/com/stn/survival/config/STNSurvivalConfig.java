@@ -17,7 +17,7 @@ public class STNSurvivalConfig {
     public static Set<String> DISABLED_MOB_SPAWNS = new HashSet<>();
 
     // Survival Night Settings
-    public static int SURVIVAL_NIGHT_INTERVAL = 6; // Every 6 days (~2 hours real time)
+    public static int SURVIVAL_NIGHT_INTERVAL = 10; // Every 10 days
     public static int SURVIVAL_NIGHT_START_HOUR = 22; // 10 PM in-game time
     public static int SURVIVAL_NIGHT_END_HOUR = 6; // 6 AM - sunrise
 
@@ -62,10 +62,10 @@ public class STNSurvivalConfig {
 
     // Gamestage Settings
     public static boolean ENABLE_GAMESTAGE = true;
-    public static int GAMESTAGE_DAYS_MULTIPLIER = 2;
-    public static int GAMESTAGE_ZOMBIE_KILLS_DIVISOR = 50;
-    public static int GAMESTAGE_SURVIVAL_NIGHT_BONUS = 5;
-    public static int GAMESTAGE_DEATH_PENALTY = 2;
+    public static double GAMESTAGE_PER_NIGHT = 0.15;           // +0.15 per night survived
+    public static double GAMESTAGE_SURVIVAL_NIGHT_BONUS = 2.0; // +2 per survival night event
+    public static double GAMESTAGE_PER_ZOMBIE_KILL = 0.005;    // 200 kills = 1 gamestage (0.25 per 50)
+    public static double GAMESTAGE_DEATH_PENALTY = 2.0;        // -2 per death (only affects kill bonus)
 
     // Gamestage Thresholds
     public static int GAMESTAGE_FERAL_THRESHOLD = 10;

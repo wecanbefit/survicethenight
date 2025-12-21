@@ -4,10 +4,11 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "PlayerMovementMixin",
-    "ExplosionMixin"
+    "ZombieEntityMixin"
   ],
   "client": [],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "_comment": "ExplosionMixin disabled - needs update for 1.21 Explosion API changes"
 }

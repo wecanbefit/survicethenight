@@ -48,9 +48,9 @@ public class MarksmanSkeletonEntity extends SkeletonEntity {
 
     public static DefaultAttributeContainer.Builder createMarksmanAttributes() {
         return HostileEntity.createHostileAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, STNSkeletonsConfig.MARKSMAN_HEALTH)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, STNSkeletonsConfig.MARKSMAN_SPEED)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 40.0); // Long range
+            .add(EntityAttributes.MAX_HEALTH, STNSkeletonsConfig.MARKSMAN_HEALTH)
+            .add(EntityAttributes.MOVEMENT_SPEED, STNSkeletonsConfig.MARKSMAN_SPEED)
+            .add(EntityAttributes.FOLLOW_RANGE, 40.0); // Long range
     }
 
     @Override

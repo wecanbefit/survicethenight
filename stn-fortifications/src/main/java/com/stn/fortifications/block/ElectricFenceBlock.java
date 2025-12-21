@@ -8,7 +8,6 @@ import net.minecraft.block.Waterloggable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
@@ -17,7 +16,6 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -32,7 +30,9 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
+import net.minecraft.world.WorldView;
+import net.minecraft.world.block.WireOrientation;
+import net.minecraft.world.tick.ScheduledTickView;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -108,20 +108,21 @@ public class ElectricFenceBlock extends Block implements Waterloggable {
 
     private boolean canConnect(BlockState state, BlockView world, BlockPos pos) {
         return state.getBlock() instanceof ElectricFenceBlock ||
+               state.getBlock() instanceof BarbedWireBlock ||
                state.getBlock() instanceof FenceGateBlock ||
                state.isSolidBlock(world, pos);
     }
 
+    // Update block state when neighbor changes
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
-            WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState getStateForNeighborUpdate(BlockState state, WorldView world, ScheduledTickView tickView,
+            BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, Random random) {
         if (state.get(WATERLOGGED)) {
-            world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+            tickView.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
 
         if (direction.getAxis().isHorizontal()) {
-            boolean shouldConnect = neighborState.getBlock() instanceof ElectricFenceBlock ||
-                neighborState.isSolidBlock((BlockView) world, neighborPos);
+            boolean shouldConnect = canConnect(neighborState, world, neighborPos);
 
             state = switch (direction) {
                 case NORTH -> state.with(NORTH, shouldConnect);
@@ -132,9 +133,7 @@ public class ElectricFenceBlock extends Block implements Waterloggable {
             };
 
             // Schedule a tick to recalculate power when a neighbor changes
-            if (world instanceof ServerWorld serverWorld) {
-                serverWorld.scheduleBlockTick(pos, this, 1);
-            }
+            tickView.scheduleBlockTick(pos, this, 1);
         }
         return state;
     }
@@ -173,8 +172,9 @@ public class ElectricFenceBlock extends Block implements Waterloggable {
         return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
     }
 
+    // Called when neighbor block updates
     @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+    protected void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, WireOrientation wireOrientation, boolean notify) {
         if (!world.isClient()) {
             // Schedule tick to recalculate power
             world.scheduleBlockTick(pos, this, 1);
@@ -185,20 +185,19 @@ public class ElectricFenceBlock extends Block implements Waterloggable {
      * When a fence is broken, notify all connected fences to recalculate power
      */
     @Override
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+    protected void onStateReplaced(BlockState state, ServerWorld world, BlockPos pos, boolean moved) {
+        BlockState newState = world.getBlockState(pos);
         if (!state.isOf(newState.getBlock())) {
             // This fence was removed, schedule updates for neighbors
-            if (!world.isClient()) {
-                for (Direction dir : Direction.Type.HORIZONTAL) {
-                    BlockPos neighborPos = pos.offset(dir);
-                    BlockState neighborState = world.getBlockState(neighborPos);
-                    if (neighborState.getBlock() instanceof ElectricFenceBlock) {
-                        world.scheduleBlockTick(neighborPos, this, 1);
-                    }
+            for (Direction dir : Direction.Type.HORIZONTAL) {
+                BlockPos neighborPos = pos.offset(dir);
+                BlockState neighborState = world.getBlockState(neighborPos);
+                if (neighborState.getBlock() instanceof ElectricFenceBlock) {
+                    world.scheduleBlockTick(neighborPos, this, 1);
                 }
             }
         }
-        super.onStateReplaced(state, world, pos, newState, moved);
+        super.onStateReplaced(state, world, pos, moved);
     }
 
     /**
@@ -272,9 +271,9 @@ public class ElectricFenceBlock extends Block implements Waterloggable {
         }
     }
 
-    @Override
-    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-        if (world.isClient() || !state.get(POWERED)) {
+    // Called when entity collides with block
+    protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+        if (world.isClient() || !state.get(POWERED) || !(world instanceof ServerWorld serverWorld)) {
             return;
         }
 
@@ -292,11 +291,9 @@ public class ElectricFenceBlock extends Block implements Waterloggable {
                 damage *= 2.0f;
             }
 
-            DamageSource damageSource = new DamageSource(
-                world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DamageTypes.LIGHTNING_BOLT)
-            );
+            DamageSource damageSource = serverWorld.getDamageSources().lightningBolt();
 
-            livingEntity.damage(damageSource, damage);
+            livingEntity.damage(serverWorld, damageSource, damage);
 
             // Apply stun effect (slowness + weakness)
             livingEntity.addStatusEffect(new StatusEffectInstance(
@@ -315,20 +312,17 @@ public class ElectricFenceBlock extends Block implements Waterloggable {
                 )
             );
 
-            // Visual effects
-            if (world instanceof ServerWorld serverWorld) {
-                // Electric spark particles
-                for (int i = 0; i < 10; i++) {
-                    serverWorld.spawnParticles(
-                        ParticleTypes.ELECTRIC_SPARK,
-                        entity.getX() + (world.random.nextDouble() - 0.5) * 0.5,
-                        entity.getY() + world.random.nextDouble() * entity.getHeight(),
-                        entity.getZ() + (world.random.nextDouble() - 0.5) * 0.5,
-                        1,
-                        0.1, 0.1, 0.1,
-                        0.1
-                    );
-                }
+            // Visual effects - electric spark particles
+            for (int i = 0; i < 10; i++) {
+                serverWorld.spawnParticles(
+                    ParticleTypes.ELECTRIC_SPARK,
+                    entity.getX() + (world.random.nextDouble() - 0.5) * 0.5,
+                    entity.getY() + world.random.nextDouble() * entity.getHeight(),
+                    entity.getZ() + (world.random.nextDouble() - 0.5) * 0.5,
+                    1,
+                    0.1, 0.1, 0.1,
+                    0.1
+                );
             }
 
             // Zap sound
@@ -370,12 +364,7 @@ public class ElectricFenceBlock extends Block implements Waterloggable {
     }
 
     @Override
-    public boolean isTransparent(BlockState state, BlockView world, BlockPos pos) {
-        return true;
-    }
-
-    @Override
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
+    protected void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
         if (!world.isClient() && !state.isOf(oldState.getBlock())) {
             // Schedule tick to calculate initial power state
             world.scheduleBlockTick(pos, this, 1);

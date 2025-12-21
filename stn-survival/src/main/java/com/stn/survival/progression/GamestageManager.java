@@ -3,7 +3,9 @@ package com.stn.survival.progression;
 import com.stn.core.api.IGamestageProvider;
 import com.stn.survival.STNSurvival;
 import com.stn.survival.config.STNSurvivalConfig;
+import com.stn.survival.network.GamestageHudPayload;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.server.MinecraftServer;
@@ -21,6 +23,8 @@ import java.util.UUID;
 public class GamestageManager implements IGamestageProvider {
     private final MinecraftServer server;
     private GamestageState state;
+    private int hudSyncTicks = 0;
+    private static final int HUD_SYNC_INTERVAL = 20; // Sync every second
 
     public GamestageManager(MinecraftServer server) {
         this.server = server;
@@ -54,6 +58,45 @@ public class GamestageManager implements IGamestageProvider {
         if (currentDay > state.getLastDayCheck()) {
             state.setLastDayCheck(currentDay);
             onNewDay(currentDay);
+        }
+
+        // Sync HUD data to all players periodically
+        hudSyncTicks++;
+        if (hudSyncTicks >= HUD_SYNC_INTERVAL) {
+            hudSyncTicks = 0;
+            syncHudToAllPlayers();
+        }
+    }
+
+    /**
+     * Syncs gamestage HUD data to all connected players.
+     */
+    private void syncHudToAllPlayers() {
+        ServerWorld overworld = server.getOverworld();
+        if (overworld == null) return;
+
+        long currentDay = overworld.getTimeOfDay() / 24000;
+        int worldGamestage = state.getWorldGamestage();
+
+        // Calculate global deaths (sum of all player deaths)
+        int globalDeaths = 0;
+        for (PlayerGamestage playerData : state.getPlayerData().values()) {
+            globalDeaths += playerData.getDeathCount();
+        }
+
+        // Send to each player with their personal death count
+        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+            PlayerGamestage playerData = getOrCreatePlayerData(player);
+            int playerDeaths = playerData.getDeathCount();
+
+            GamestageHudPayload payload = new GamestageHudPayload(
+                currentDay,
+                worldGamestage,
+                playerDeaths,
+                globalDeaths
+            );
+
+            ServerPlayNetworking.send(player, payload);
         }
     }
 
@@ -172,7 +215,9 @@ public class GamestageManager implements IGamestageProvider {
     public void addGamestage(ServerPlayerEntity player, int amount) {
         PlayerGamestage data = getOrCreatePlayerData(player);
         // Add zombie kills to simulate gamestage gain
-        for (int i = 0; i < amount * STNSurvivalConfig.GAMESTAGE_ZOMBIE_KILLS_DIVISOR; i++) {
+        // Each kill = 0.005 gamestage, so we need (amount / 0.005) = amount * 200 kills
+        int killsToAdd = (int) (amount / STNSurvivalConfig.GAMESTAGE_PER_ZOMBIE_KILL);
+        for (int i = 0; i < killsToAdd; i++) {
             data.addZombieKill();
         }
         recalculateWorldGamestage();
@@ -182,8 +227,9 @@ public class GamestageManager implements IGamestageProvider {
     @Override
     public void removeGamestage(ServerPlayerEntity player, int amount) {
         PlayerGamestage data = getOrCreatePlayerData(player);
-        // Increment death count to reduce gamestage
-        for (int i = 0; i < amount / STNSurvivalConfig.GAMESTAGE_DEATH_PENALTY; i++) {
+        // Increment death count to reduce gamestage (only affects kill bonus)
+        int deathsToAdd = (int) (amount / STNSurvivalConfig.GAMESTAGE_DEATH_PENALTY);
+        for (int i = 0; i < deathsToAdd; i++) {
             data.onDeath();
         }
         recalculateWorldGamestage();

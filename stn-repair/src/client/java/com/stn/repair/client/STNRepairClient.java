@@ -1,6 +1,8 @@
 package com.stn.repair.client;
 
 import com.stn.repair.STNRepair;
+import com.stn.repair.client.hud.HammerHudOverlay;
+import com.stn.repair.config.STNRepairConfig;
 import net.fabricmc.api.ClientModInitializer;
 
 /**
@@ -11,8 +13,14 @@ public class STNRepairClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        STNRepair.LOGGER.info("Survive The Night - Repair (Client) initialized!");
+        STNRepair.LOGGER.info("Survive The Night - Repair (Client) initializing...");
 
-        // TODO: Register hammer HUD overlay
+        // Load config
+        STNRepairConfig.init();
+
+        // Register hammer HUD overlay
+        HammerHudOverlay.register();
+
+        STNRepair.LOGGER.info("Survive The Night - Repair (Client) initialized!");
     }
 }

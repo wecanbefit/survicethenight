@@ -17,7 +17,7 @@ public record SurvivalNightSyncPayload(boolean isActive) implements CustomPayloa
 
     public static final PacketCodec<RegistryByteBuf, SurvivalNightSyncPayload> CODEC =
         PacketCodec.tuple(
-            PacketCodecs.BOOL, SurvivalNightSyncPayload::isActive,
+            PacketCodecs.BOOLEAN, SurvivalNightSyncPayload::isActive,
             SurvivalNightSyncPayload::new
         );
 

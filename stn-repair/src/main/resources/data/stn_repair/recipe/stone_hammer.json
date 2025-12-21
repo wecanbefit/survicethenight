@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSC",
+    " S ",
+    " S "
+  ],
+  "key": {
+    "C": "minecraft:cobblestone",
+    "S": "minecraft:stick"
+  },
+  "result": {
+    "id": "stn_repair:stone_hammer",
+    "count": 1
+  }
+}

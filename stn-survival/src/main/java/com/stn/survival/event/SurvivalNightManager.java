@@ -11,6 +11,7 @@ import com.stn.survival.spawn.JockeySpawner;
 import com.stn.survival.spawn.MobCategory;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.mob.PhantomEntity;
@@ -311,7 +312,7 @@ public class SurvivalNightManager implements ISurvivalNightProvider {
     }
 
     private Entity spawnHordeMob(ServerWorld world, BlockPos pos, Random random, HordeMobRegistry.HordeMob mobType, ServerPlayerEntity target) {
-        MobEntity mob = (MobEntity) mobType.entityType().create(world);
+        MobEntity mob = (MobEntity) mobType.entityType().create(world, SpawnReason.MOB_SUMMONED);
         if (mob == null) return null;
 
         mob.refreshPositionAndAngles(pos, random.nextFloat() * 360f, 0);
@@ -328,7 +329,7 @@ public class SurvivalNightManager implements ISurvivalNightProvider {
     }
 
     private void spawnBossMob(ServerWorld world, BlockPos pos, Random random, HordeMobRegistry.HordeMob bossMob, ServerPlayerEntity target) {
-        MobEntity boss = (MobEntity) bossMob.entityType().create(world);
+        MobEntity boss = (MobEntity) bossMob.entityType().create(world, SpawnReason.MOB_SUMMONED);
         if (boss == null) return;
 
         boss.refreshPositionAndAngles(pos, random.nextFloat() * 360f, 0);

@@ -14,7 +14,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.state.property.Property;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -24,8 +24,8 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
+import net.minecraft.world.tick.ScheduledTickView;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ import java.util.List;
 public class MotionSensorBlock extends Block implements Waterloggable {
 
     public static final BooleanProperty POWERED = Properties.POWERED;
-    public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
+    public static final Property<Direction> FACING = Properties.HORIZONTAL_FACING;
     public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
 
     private static final int DETECTION_RANGE = 8;
@@ -103,18 +103,19 @@ public class MotionSensorBlock extends Block implements Waterloggable {
         return world.getBlockState(attachPos).isSolidBlock(world, attachPos);
     }
 
+    // Update block state when neighbor changes
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
-            WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState getStateForNeighborUpdate(BlockState state, WorldView world, ScheduledTickView tickView,
+            BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, Random random) {
         if (state.get(WATERLOGGED)) {
-            world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+            tickView.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
 
         // Check if the block we're attached to was removed
         Direction facing = state.get(FACING);
         if (direction == facing.getOpposite()) {
             BlockPos attachPos = pos.offset(facing.getOpposite());
-            if (!world.getBlockState(attachPos).isSolidBlock((BlockView) world, attachPos)) {
+            if (!world.getBlockState(attachPos).isSolidBlock(world, attachPos)) {
                 return net.minecraft.block.Blocks.AIR.getDefaultState();
             }
         }
@@ -128,7 +129,7 @@ public class MotionSensorBlock extends Block implements Waterloggable {
     }
 
     @Override
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
+    protected void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
         if (!world.isClient() && !state.isOf(oldState.getBlock())) {
             // Start scanning for mobs
             world.scheduleBlockTick(pos, this, SCAN_INTERVAL);
@@ -154,8 +155,8 @@ public class MotionSensorBlock extends Block implements Waterloggable {
             }
 
             // Notify neighbors of redstone change
-            world.updateNeighborsAlways(pos, this);
-            world.updateNeighborsAlways(pos.offset(state.get(FACING).getOpposite()), this);
+            world.updateNeighbors(pos, this);
+            world.updateNeighbors(pos.offset(state.get(FACING).getOpposite()), this);
         }
 
         // Schedule next scan
@@ -238,21 +239,16 @@ public class MotionSensorBlock extends Block implements Waterloggable {
     }
 
     @Override
-    public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
+    protected int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
         return state.get(POWERED) ? 15 : 0;
     }
 
     @Override
-    public int getStrongRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
+    protected int getStrongRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
         // Strong power only to the block it's attached to
         if (state.get(POWERED) && direction == state.get(FACING)) {
             return 15;
         }
         return 0;
-    }
-
-    @Override
-    public boolean isTransparent(BlockState state, BlockView world, BlockPos pos) {
-        return true;
     }
 }

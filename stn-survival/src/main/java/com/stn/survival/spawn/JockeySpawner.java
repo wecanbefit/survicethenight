@@ -3,6 +3,7 @@ package com.stn.survival.spawn;
 import com.stn.survival.STNSurvival;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -126,10 +127,10 @@ public class JockeySpawner {
         JockeyType jockeyType = selectRandomJockey(random, gamestage);
         if (jockeyType == null) return spawned;
 
-        Entity mount = jockeyType.mountType().create(world);
+        Entity mount = jockeyType.mountType().create(world, SpawnReason.MOB_SUMMONED);
         if (mount == null) return spawned;
 
-        MobEntity rider = jockeyType.riderType().create(world);
+        MobEntity rider = jockeyType.riderType().create(world, SpawnReason.MOB_SUMMONED);
         if (rider == null) {
             mount.discard();
             return spawned;

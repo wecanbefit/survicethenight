@@ -12,6 +12,7 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -28,10 +29,10 @@ public class WebspinnerSpiderEntity extends SpiderEntity {
 
     public static DefaultAttributeContainer.Builder createWebspinnerAttributes() {
         return HostileEntity.createHostileAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, STNSpidersConfig.WEBSPINNER_HEALTH)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, STNSpidersConfig.WEBSPINNER_SPEED)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, STNSpidersConfig.WEBSPINNER_DAMAGE)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 24.0);
+            .add(EntityAttributes.MAX_HEALTH, STNSpidersConfig.WEBSPINNER_HEALTH)
+            .add(EntityAttributes.MOVEMENT_SPEED, STNSpidersConfig.WEBSPINNER_SPEED)
+            .add(EntityAttributes.ATTACK_DAMAGE, STNSpidersConfig.WEBSPINNER_DAMAGE)
+            .add(EntityAttributes.FOLLOW_RANGE, 24.0);
     }
 
     @Override
@@ -39,22 +40,22 @@ public class WebspinnerSpiderEntity extends SpiderEntity {
         super.tickMovement();
 
         // Web trail particles
-        if (this.random.nextInt(15) == 0) {
-            this.getWorld().addParticle(
+        if (this.random.nextInt(15) == 0 && this.getWorld() instanceof ServerWorld sw) {
+            sw.spawnParticles(
                 ParticleTypes.ITEM_SNOWBALL,
-                this.getX() + this.random.nextGaussian() * 0.3,
+                this.getX(),
                 this.getY() + 0.2,
-                this.getZ() + this.random.nextGaussian() * 0.3,
-                0, 0, 0
+                this.getZ(),
+                1, 0.3, 0, 0.3, 0
             );
         }
     }
 
     @Override
-    public boolean tryAttack(Entity target) {
-        boolean hit = super.tryAttack(target);
+    public boolean tryAttack(ServerWorld world, Entity target) {
+        boolean hit = super.tryAttack(world, target);
 
-        if (hit && target instanceof LivingEntity living && !this.getWorld().isClient()) {
+        if (hit && target instanceof LivingEntity living) {
             // Apply slowness
             living.addStatusEffect(new StatusEffectInstance(
                 StatusEffects.SLOWNESS,
@@ -66,23 +67,19 @@ public class WebspinnerSpiderEntity extends SpiderEntity {
 
             // Try to place cobweb at target's feet
             BlockPos targetPos = target.getBlockPos();
-            if (this.getWorld().getBlockState(targetPos).isAir() && this.random.nextInt(3) == 0) {
-                this.getWorld().setBlockState(targetPos, Blocks.COBWEB.getDefaultState());
+            if (world.getBlockState(targetPos).isAir() && this.random.nextInt(3) == 0) {
+                world.setBlockState(targetPos, Blocks.COBWEB.getDefaultState());
                 this.playSound(SoundEvents.BLOCK_WOOL_PLACE, 0.5f, 1.5f);
             }
 
             // Web particles
-            for (int i = 0; i < 8; i++) {
-                target.getWorld().addParticle(
-                    ParticleTypes.ITEM_SNOWBALL,
-                    target.getX() + this.random.nextGaussian() * 0.5,
-                    target.getY() + 0.5,
-                    target.getZ() + this.random.nextGaussian() * 0.5,
-                    this.random.nextGaussian() * 0.05,
-                    0.05,
-                    this.random.nextGaussian() * 0.05
-                );
-            }
+            world.spawnParticles(
+                ParticleTypes.ITEM_SNOWBALL,
+                target.getX(),
+                target.getY() + 0.5,
+                target.getZ(),
+                8, 0.5, 0.3, 0.5, 0.05
+            );
         }
 
         return hit;

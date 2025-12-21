@@ -42,6 +42,10 @@ public interface ISoundEmitter {
         CHEST_OPEN,
         COMBAT,
         MOVEMENT,
-        EXPLOSION
+        EXPLOSION,
+        INTERACTION,
+        LEVER,
+        BUTTON,
+        GOAT_HORN
     }
 }

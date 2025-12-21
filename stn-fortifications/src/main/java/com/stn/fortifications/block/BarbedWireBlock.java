@@ -8,14 +8,12 @@ import net.minecraft.block.Waterloggable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -27,9 +25,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
+import net.minecraft.world.WorldView;
+import net.minecraft.world.tick.ScheduledTickView;
 
 /**
  * Barbed wire that slows and damages entities passing through.
@@ -72,6 +72,7 @@ public class BarbedWireBlock extends Block implements Waterloggable {
 
     private boolean canConnect(BlockState state, BlockView world, BlockPos pos) {
         return state.getBlock() instanceof BarbedWireBlock ||
+               state.getBlock() instanceof ElectricFenceBlock ||
                state.getBlock() instanceof FenceGateBlock ||
                state.isSolidBlock(world, pos);
     }
@@ -95,15 +96,16 @@ public class BarbedWireBlock extends Block implements Waterloggable {
             .with(WATERLOGGED, fluidState.getFluid() == Fluids.WATER);
     }
 
+    // Update block state when neighbor changes
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
-            WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState getStateForNeighborUpdate(BlockState state, WorldView world, ScheduledTickView tickView,
+            BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, Random random) {
         if (state.get(WATERLOGGED)) {
-            world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+            tickView.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
 
         if (direction.getAxis().isHorizontal()) {
-            boolean shouldConnect = canConnect(neighborState, (BlockView) world, neighborPos);
+            boolean shouldConnect = canConnect(neighborState, world, neighborPos);
 
             return switch (direction) {
                 case NORTH -> state.with(NORTH, shouldConnect);
@@ -137,9 +139,9 @@ public class BarbedWireBlock extends Block implements Waterloggable {
         return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
     }
 
-    @Override
-    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-        if (world.isClient()) {
+    // Called when entity collides with block
+    protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+        if (world.isClient() || !(world instanceof ServerWorld serverWorld)) {
             return;
         }
 
@@ -154,7 +156,7 @@ public class BarbedWireBlock extends Block implements Waterloggable {
             entity.slowMovement(state, new net.minecraft.util.math.Vec3d(SLOW_FACTOR, 1.0, SLOW_FACTOR));
 
             // Damage on movement
-            if (entity.horizontalSpeed > 0.01) {
+            if (entity.getVelocity().horizontalLengthSquared() > 0.0001) {
                 float damage = DAMAGE;
 
                 // More damage to hostile mobs
@@ -162,15 +164,12 @@ public class BarbedWireBlock extends Block implements Waterloggable {
                     damage *= 2.0f;
                 }
 
-                DamageSource damageSource = new DamageSource(
-                    world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DamageTypes.CACTUS)
-                );
+                DamageSource damageSource = serverWorld.getDamageSources().cactus();
 
-                livingEntity.damage(damageSource, damage);
+                livingEntity.damage(serverWorld, damageSource, damage);
 
                 // Visual effects
-                if (world instanceof ServerWorld serverWorld) {
-                    serverWorld.spawnParticles(
+                serverWorld.spawnParticles(
                         ParticleTypes.DAMAGE_INDICATOR,
                         entity.getX(),
                         entity.getY() + 0.5,
@@ -178,8 +177,7 @@ public class BarbedWireBlock extends Block implements Waterloggable {
                         1,
                         0.1, 0.1, 0.1,
                         0.05
-                    );
-                }
+                );
 
                 // Sound effect
                 if (world.random.nextInt(5) == 0) {
@@ -222,8 +220,4 @@ public class BarbedWireBlock extends Block implements Waterloggable {
         }
     }
 
-    @Override
-    public boolean isTransparent(BlockState state, BlockView world, BlockPos pos) {
-        return true;
-    }
 }

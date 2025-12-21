@@ -27,6 +27,26 @@ public interface ISensoryMob {
         return 1.0f;
     }
 
+    // ========== PLAYER AWARENESS ==========
+
+    /**
+     * Get the maximum range this mob can detect players directly.
+     * This works at all times (day/night) and prioritizes players over other targets.
+     * @return player detection range in blocks
+     */
+    default double getPlayerDetectionRange() {
+        return 48.0;
+    }
+
+    /**
+     * Get the weight multiplier for player detection scoring.
+     * Higher values = players are prioritized over other targets.
+     * @return weight multiplier (default 1.5 - players are high priority)
+     */
+    default float getPlayerWeight() {
+        return 1.5f;
+    }
+
     // ========== SMELL DETECTION ==========
 
     /**

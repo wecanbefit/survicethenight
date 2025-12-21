@@ -11,6 +11,7 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.World;
 
@@ -26,10 +27,10 @@ public class VenomSpiderEntity extends SpiderEntity {
 
     public static DefaultAttributeContainer.Builder createVenomAttributes() {
         return HostileEntity.createHostileAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, STNSpidersConfig.VENOM_HEALTH)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, STNSpidersConfig.VENOM_SPEED)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, STNSpidersConfig.VENOM_DAMAGE)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 24.0);
+            .add(EntityAttributes.MAX_HEALTH, STNSpidersConfig.VENOM_HEALTH)
+            .add(EntityAttributes.MOVEMENT_SPEED, STNSpidersConfig.VENOM_SPEED)
+            .add(EntityAttributes.ATTACK_DAMAGE, STNSpidersConfig.VENOM_DAMAGE)
+            .add(EntityAttributes.FOLLOW_RANGE, 24.0);
     }
 
     @Override
@@ -37,22 +38,22 @@ public class VenomSpiderEntity extends SpiderEntity {
         super.tickMovement();
 
         // Dripping venom particles
-        if (this.random.nextInt(10) == 0) {
-            this.getWorld().addParticle(
+        if (this.random.nextInt(10) == 0 && this.getWorld() instanceof ServerWorld sw) {
+            sw.spawnParticles(
                 ParticleTypes.ITEM_SLIME,
-                this.getX() + this.random.nextGaussian() * 0.3,
+                this.getX(),
                 this.getY() + 0.3,
-                this.getZ() + this.random.nextGaussian() * 0.3,
-                0, -0.05, 0
+                this.getZ(),
+                1, 0.3, 0, 0.3, 0
             );
         }
     }
 
     @Override
-    public boolean tryAttack(Entity target) {
-        boolean hit = super.tryAttack(target);
+    public boolean tryAttack(ServerWorld world, Entity target) {
+        boolean hit = super.tryAttack(world, target);
 
-        if (hit && target instanceof LivingEntity living && !this.getWorld().isClient()) {
+        if (hit && target instanceof LivingEntity living) {
             // Check for existing poison to stack duration
             StatusEffectInstance existingPoison = living.getStatusEffect(StatusEffects.POISON);
             int baseDuration = STNSpidersConfig.VENOM_POISON_DURATION;
@@ -82,17 +83,13 @@ public class VenomSpiderEntity extends SpiderEntity {
             }
 
             // Venom hit particles
-            for (int i = 0; i < 8; i++) {
-                target.getWorld().addParticle(
-                    ParticleTypes.ITEM_SLIME,
-                    target.getX() + this.random.nextGaussian() * 0.5,
-                    target.getY() + 0.8,
-                    target.getZ() + this.random.nextGaussian() * 0.5,
-                    this.random.nextGaussian() * 0.05,
-                    0.1,
-                    this.random.nextGaussian() * 0.05
-                );
-            }
+            world.spawnParticles(
+                ParticleTypes.ITEM_SLIME,
+                target.getX(),
+                target.getY() + 0.8,
+                target.getZ(),
+                8, 0.5, 0.3, 0.5, 0.1
+            );
         }
 
         return hit;

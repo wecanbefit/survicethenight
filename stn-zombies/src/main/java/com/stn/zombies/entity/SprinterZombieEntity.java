@@ -7,6 +7,7 @@ import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.World;
 
@@ -26,11 +27,11 @@ public class SprinterZombieEntity extends ZombieEntity implements BlockBreakAnim
 
     public static DefaultAttributeContainer.Builder createSprinterAttributes() {
         return ZombieEntity.createZombieAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, STNZombiesConfig.SPRINTER_HEALTH)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, STNZombiesConfig.SPRINTER_SPEED)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, STNZombiesConfig.SPRINTER_DAMAGE)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 48.0)
-            .add(EntityAttributes.GENERIC_ARMOR, 0.0);
+            .add(EntityAttributes.MAX_HEALTH, STNZombiesConfig.SPRINTER_HEALTH)
+            .add(EntityAttributes.MOVEMENT_SPEED, STNZombiesConfig.SPRINTER_SPEED)
+            .add(EntityAttributes.ATTACK_DAMAGE, STNZombiesConfig.SPRINTER_DAMAGE)
+            .add(EntityAttributes.FOLLOW_RANGE, 48.0)
+            .add(EntityAttributes.ARMOR, 0.0);
     }
 
     @Override
@@ -66,13 +67,13 @@ public class SprinterZombieEntity extends ZombieEntity implements BlockBreakAnim
             }
 
             // Sprint particles
-            if (isSprinting && this.random.nextInt(2) == 0) {
-                this.getWorld().addParticle(
+            if (isSprinting && this.random.nextInt(2) == 0 && this.getWorld() instanceof ServerWorld sw) {
+                sw.spawnParticles(
                     ParticleTypes.CLOUD,
                     this.getX(),
                     this.getY() + 0.1,
                     this.getZ(),
-                    0, 0, 0
+                    1, 0, 0, 0, 0
                 );
             }
         }
@@ -89,7 +90,7 @@ public class SprinterZombieEntity extends ZombieEntity implements BlockBreakAnim
     }
 
     private void updateSpeed(double speed) {
-        var attr = this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+        var attr = this.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
         if (attr != null && Math.abs(attr.getBaseValue() - speed) > 0.01) {
             attr.setBaseValue(speed);
         }

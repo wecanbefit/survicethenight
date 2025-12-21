@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "stn_traders:block/jobs_board", "y": 180 },
+    "facing=south": { "model": "stn_traders:block/jobs_board" },
+    "facing=east": { "model": "stn_traders:block/jobs_board", "y": 270 },
+    "facing=west": { "model": "stn_traders:block/jobs_board", "y": 90 }
+  }
+}

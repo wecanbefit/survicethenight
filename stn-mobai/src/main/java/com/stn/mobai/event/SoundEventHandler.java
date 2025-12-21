@@ -15,7 +15,6 @@ import net.minecraft.item.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -130,9 +129,9 @@ public class SoundEventHandler {
         return ActionResult.PASS;
     }
 
-    private static TypedActionResult<ItemStack> onItemUse(PlayerEntity player, World world, Hand hand) {
+    private static ActionResult onItemUse(PlayerEntity player, World world, Hand hand) {
         if (world.isClient() || hand != Hand.MAIN_HAND) {
-            return TypedActionResult.pass(player.getStackInHand(hand));
+            return ActionResult.PASS;
         }
 
         ItemStack stack = player.getStackInHand(hand);
@@ -150,7 +149,7 @@ public class SoundEventHandler {
             );
         }
 
-        return TypedActionResult.pass(stack);
+        return ActionResult.PASS;
     }
 
     private static ActionResult onAttackEntity(PlayerEntity player, World world, Hand hand, Entity entity, EntityHitResult hitResult) {
@@ -176,24 +175,27 @@ public class SoundEventHandler {
     }
 
     private static float getWeaponVolume(Item item) {
+        // Use item ID to determine weapon type since tool classes were removed in 1.21.5+
+        String itemId = net.minecraft.registry.Registries.ITEM.getId(item).getPath().toLowerCase();
+
         // Mace - very loud
-        if (item instanceof MaceItem) {
+        if (itemId.contains("mace")) {
             return SoundVolumes.WEAPON_MACE;
         }
         // Trident - loud
-        if (item instanceof TridentItem) {
+        if (itemId.contains("trident")) {
             return SoundVolumes.WEAPON_TRIDENT;
         }
         // Axes - medium-loud
-        if (item instanceof AxeItem) {
+        if (itemId.contains("_axe")) {
             return SoundVolumes.WEAPON_AXE;
         }
         // Swords - medium
-        if (item instanceof SwordItem) {
+        if (itemId.contains("sword")) {
             return SoundVolumes.WEAPON_SWORD;
         }
         // Other tools (pickaxe, shovel, hoe)
-        if (item instanceof ToolItem) {
+        if (itemId.contains("pickaxe") || itemId.contains("shovel") || itemId.contains("hoe")) {
             return SoundVolumes.WEAPON_DEFAULT;
         }
         // Bare fists or non-weapons

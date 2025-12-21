@@ -1,0 +1,6 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "stn_repair:item/iron_hammer"
+  }
+}

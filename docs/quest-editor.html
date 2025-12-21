@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quest Editor - Survive The Night</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+        .font-creepy { font-family: 'Creepster', cursive; }
+        .font-mono { font-family: 'Fira Code', monospace; }
+        .bg-gradient-night { background: linear-gradient(135deg, #1a1505 0%, #2e2a0a 50%, #1a1505 100%); }
+        .type-btn.active { background: rgba(234, 179, 8, 0.3); border-color: rgb(234, 179, 8); }
+    </style>
+</head>
+<body class="bg-gradient-night min-h-screen text-gray-100 font-['Inter']">
+    <nav class="fixed top-0 w-full bg-black/80 backdrop-blur-md z-50 border-b border-yellow-900/50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-3xl">🌙</span>
+                <span class="font-creepy text-2xl text-green-500">STN</span>
+                <span class="text-gray-400">/</span>
+                <span class="text-yellow-400 font-semibold">quest-editor</span>
+            </a>
+            <div class="flex gap-4">
+                <a href="loot-editor.html" class="text-gray-300 hover:text-yellow-400">Loot Editor</a>
+                <a href="index.html" class="text-gray-300 hover:text-yellow-400">Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="pt-24 pb-8 px-4 text-center">
+        <h1 class="font-creepy text-4xl text-yellow-500 mb-2">Quest Editor</h1>
+        <p class="text-gray-400">Load, edit, and export your quests.json configuration</p>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 pb-16">
+        <!-- File Controls -->
+        <div class="flex flex-wrap gap-4 mb-8 justify-center">
+            <label class="px-4 py-2 bg-green-700 hover:bg-green-600 rounded-lg cursor-pointer transition">
+                <span>Load quests.json</span>
+                <input type="file" id="fileInput" accept=".json" class="hidden">
+            </label>
+            <button onclick="loadDefault()" class="px-4 py-2 bg-blue-700 hover:bg-blue-600 rounded-lg transition">
+                Load Default
+            </button>
+            <button onclick="exportConfig()" class="px-4 py-2 bg-yellow-700 hover:bg-yellow-600 rounded-lg transition">
+                Export JSON
+            </button>
+            <button onclick="showAddModal()" class="px-4 py-2 bg-purple-700 hover:bg-purple-600 rounded-lg transition">
+                + Add Quest
+            </button>
+        </div>
+
+        <!-- Type Filter -->
+        <div class="flex flex-wrap justify-center gap-2 mb-6">
+            <span class="text-gray-400 self-center mr-2">Filter by Type:</span>
+            <button onclick="selectType('all')" class="type-btn px-4 py-2 bg-yellow-900/30 border border-yellow-900/50 rounded-lg active" data-type="all">All</button>
+            <button onclick="selectType('KILL')" class="type-btn px-4 py-2 bg-black/40 border border-red-900/50 rounded-lg hover:border-red-500 transition" data-type="KILL">
+                <span class="text-red-400">Kill</span>
+            </button>
+            <button onclick="selectType('GATHER')" class="type-btn px-4 py-2 bg-black/40 border border-green-900/50 rounded-lg hover:border-green-500 transition" data-type="GATHER">
+                <span class="text-green-400">Gather</span>
+            </button>
+            <button onclick="selectType('FETCH')" class="type-btn px-4 py-2 bg-black/40 border border-blue-900/50 rounded-lg hover:border-blue-500 transition" data-type="FETCH">
+                <span class="text-blue-400">Fetch</span>
+            </button>
+        </div>
+
+        <!-- Gamestage Filter -->
+        <div class="flex flex-wrap justify-center gap-2 mb-8">
+            <span class="text-gray-400 self-center mr-2">Gamestage:</span>
+            <input type="range" id="gamestageSlider" min="0" max="100" value="0" class="w-48" oninput="updateGamestageFilter()">
+            <span id="gamestageValue" class="text-yellow-400 font-bold w-12">0</span>
+            <button onclick="resetGamestageFilter()" class="text-gray-500 hover:text-gray-300 text-sm">(reset)</button>
+        </div>
+
+        <!-- Quests Grid -->
+        <div id="questsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="text-center text-gray-500 col-span-full py-12">
+                Load a quests.json file or click "Load Default" to begin
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Modal -->
+    <div id="modal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gray-900 border border-yellow-900/50 rounded-xl p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <h3 class="font-creepy text-2xl text-yellow-400 mb-4" id="modalTitle">Add Quest</h3>
+
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Quest ID (unique)</label>
+                    <input type="text" id="questId" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white" placeholder="kill_zombies_basic">
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Quest Type</label>
+                    <select id="questType" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white" onchange="updateTargetPlaceholder()">
+                        <option value="KILL">KILL - Slay entities</option>
+                        <option value="GATHER">GATHER - Collect items (consumed)</option>
+                        <option value="FETCH">FETCH - Bring items (kept)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Target (Entity/Item ID)</label>
+                    <input type="text" id="questTarget" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white" placeholder="minecraft:zombie">
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Base Count</label>
+                    <input type="number" id="questBaseCount" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white" value="10" min="1">
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Weight (selection chance)</label>
+                    <input type="number" id="questWeight" step="0.1" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white" value="5.0" min="0.1">
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Min Gamestage</label>
+                    <input type="number" id="questMinGamestage" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white" value="0" min="0">
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Max Gamestage (-1 = no limit)</label>
+                    <input type="number" id="questMaxGamestage" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white" value="-1" min="-1">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-gray-400 text-sm mb-1">Description (use %count% for scaled amount)</label>
+                    <input type="text" id="questDescription" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white" placeholder="Kill %count% zombies">
+                </div>
+            </div>
+
+            <h4 class="text-lg text-yellow-400 mb-3 mt-6">Rewards</h4>
+            <div class="grid md:grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Base Emeralds</label>
+                    <input type="number" id="rewardEmeralds" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white" value="5" min="0">
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Base Experience</label>
+                    <input type="number" id="rewardExperience" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white" value="100" min="0">
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Item Reward (optional)</label>
+                    <input type="text" id="rewardItem" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white" placeholder="minecraft:diamond">
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Item Count</label>
+                    <input type="number" id="rewardItemCount" class="w-full bg-black/50 border border-gray-700 rounded px-3 py-2 text-white" value="1" min="1">
+                </div>
+                <div class="flex items-end">
+                    <label class="flex items-center gap-2 text-gray-400 text-sm pb-2">
+                        <input type="checkbox" id="rewardItemEnchanted" class="rounded">
+                        Item can be enchanted
+                    </label>
+                </div>
+            </div>
+
+            <div class="bg-black/30 rounded-lg p-4 mb-4">
+                <h5 class="text-sm text-gray-400 mb-2">Preview at Gamestage 0:</h5>
+                <p id="questPreview" class="text-white"></p>
+            </div>
+
+            <div class="flex gap-3 justify-end">
+                <button onclick="closeModal()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg">Cancel</button>
+                <button onclick="saveQuest()" class="px-4 py-2 bg-green-700 hover:bg-green-600 rounded-lg">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div id="exportModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gray-900 border border-yellow-900/50 rounded-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <h3 class="font-creepy text-2xl text-yellow-400 mb-4">Export quests.json</h3>
+            <textarea id="exportText" class="w-full h-96 bg-black/50 border border-gray-700 rounded p-4 font-mono text-sm text-green-400"></textarea>
+            <div class="flex gap-3 justify-end mt-4">
+                <button onclick="closeExportModal()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg">Close</button>
+                <button onclick="copyExport()" class="px-4 py-2 bg-green-700 hover:bg-green-600 rounded-lg">Copy to Clipboard</button>
+                <button onclick="downloadExport()" class="px-4 py-2 bg-blue-700 hover:bg-blue-600 rounded-lg">Download</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let config = null;
+        let currentType = 'all';
+        let currentGamestage = 0;
+        let editingId = null;
+
+        // Type colors
+        const typeColors = {
+            'KILL': { border: 'border-red-500', text: 'text-red-400', bg: 'bg-red-900/20' },
+            'GATHER': { border: 'border-green-500', text: 'text-green-400', bg: 'bg-green-900/20' },
+            'FETCH': { border: 'border-blue-500', text: 'text-blue-400', bg: 'bg-blue-900/20' }
+        };
+
+        // Calculate scaled count based on gamestage
+        function getScaledCount(baseCount, gamestage) {
+            return baseCount + Math.floor((gamestage / 10.0) * baseCount * 0.5);
+        }
+
+        // Format description with count
+        function formatDescription(description, baseCount, gamestage) {
+            const count = getScaledCount(baseCount, gamestage);
+            return description.replace('%count%', count);
+        }
+
+        // Check if quest is available at gamestage
+        function isAvailableAt(quest, gamestage) {
+            if (gamestage < quest.minGamestage) return false;
+            if (quest.maxGamestage >= 0 && gamestage > quest.maxGamestage) return false;
+            return true;
+        }
+
+        // Render quests grid
+        function renderQuests() {
+            const grid = document.getElementById('questsGrid');
+            if (!config || !config.quests) {
+                grid.innerHTML = '<div class="text-center text-gray-500 col-span-full py-12">No quests loaded</div>';
+                return;
+            }
+
+            let html = '';
+            const quests = config.quests
+                .filter(quest => {
+                    if (currentType !== 'all' && quest.type !== currentType) return false;
+                    return true;
+                })
+                .sort((a, b) => {
+                    // Sort by minGamestage, then by weight
+                    if (a.minGamestage !== b.minGamestage) return a.minGamestage - b.minGamestage;
+                    return b.weight - a.weight;
+                });
+
+            for (const quest of quests) {
+                const colors = typeColors[quest.type];
+                const available = isAvailableAt(quest, currentGamestage);
+                const opacity = available ? '' : 'opacity-40';
+                const scaledCount = getScaledCount(quest.baseCount, currentGamestage);
+                const desc = formatDescription(quest.description, quest.baseCount, currentGamestage);
+
+                const rewards = quest.rewards;
+                let rewardHtml = '';
+                if (rewards.emeralds > 0) {
+                    const scaledEmeralds = Math.floor(rewards.emeralds * (1 + currentGamestage * 0.05));
+                    rewardHtml += `<span class="text-green-400">${scaledEmeralds} emeralds</span>`;
+                }
+                if (rewards.experience > 0) {
+                    const scaledXp = Math.floor(rewards.experience * (1 + currentGamestage * 0.1));
+                    rewardHtml += `${rewardHtml ? ', ' : ''}<span class="text-yellow-400">${scaledXp} XP</span>`;
+                }
+                if (rewards.item) {
+                    const itemName = rewards.item.replace('minecraft:', '').replace('stn_traders:', '').replace(/_/g, ' ');
+                    rewardHtml += `${rewardHtml ? ', ' : ''}<span class="text-purple-400">${rewards.itemCount}x ${itemName}${rewards.itemEnchanted ? ' (enchanted)' : ''}</span>`;
+                }
+
+                html += `
+                    <div class="bg-black/40 border ${colors.border} rounded-xl p-4 ${opacity} relative group">
+                        <button onclick="deleteQuest('${quest.id}')" class="absolute top-2 right-2 text-red-500 opacity-0 group-hover:opacity-100 transition hover:text-red-400">✕</button>
+                        <button onclick="editQuest('${quest.id}')" class="absolute top-2 right-8 text-blue-500 opacity-0 group-hover:opacity-100 transition hover:text-blue-400">✎</button>
+
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="px-2 py-0.5 ${colors.bg} ${colors.text} rounded text-xs font-bold">${quest.type}</span>
+                            <span class="text-gray-500 text-xs">weight: ${quest.weight}</span>
+                        </div>
+
+                        <div class="font-semibold text-lg mb-2">${desc}</div>
+
+                        <div class="text-sm text-gray-400 mb-3">
+                            Target: <span class="text-gray-300">${quest.target}</span>
+                        </div>
+
+                        <div class="text-sm mb-2">
+                            <span class="text-gray-500">Gamestage:</span>
+                            <span class="text-yellow-400">${quest.minGamestage}</span>
+                            <span class="text-gray-600">-</span>
+                            <span class="text-yellow-400">${quest.maxGamestage === -1 ? '∞' : quest.maxGamestage}</span>
+                        </div>
+
+                        <div class="text-sm">
+                            <span class="text-gray-500">Rewards:</span>
+                            <div class="mt-1">${rewardHtml}</div>
+                        </div>
+
+                        <div class="mt-3 pt-2 border-t border-gray-800 text-xs text-gray-600">
+                            ID: ${quest.id}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (quests.length === 0) {
+                html = '<div class="text-center text-gray-500 col-span-full py-12">No quests match the current filter</div>';
+            }
+
+            grid.innerHTML = html;
+        }
+
+        // Type selection
+        function selectType(type) {
+            currentType = type;
+            document.querySelectorAll('.type-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-yellow-900/30', 'border-yellow-900/50');
+                btn.classList.add('bg-black/40');
+            });
+            const btn = document.querySelector(`[data-type="${type}"]`);
+            btn.classList.add('active', 'bg-yellow-900/30', 'border-yellow-900/50');
+            btn.classList.remove('bg-black/40');
+            renderQuests();
+        }
+
+        // Gamestage filter
+        function updateGamestageFilter() {
+            currentGamestage = parseInt(document.getElementById('gamestageSlider').value);
+            document.getElementById('gamestageValue').textContent = currentGamestage;
+            renderQuests();
+        }
+
+        function resetGamestageFilter() {
+            document.getElementById('gamestageSlider').value = 0;
+            updateGamestageFilter();
+        }
+
+        // File loading
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        config = JSON.parse(e.target.result);
+                        renderQuests();
+                    } catch (err) {
+                        alert('Error parsing JSON: ' + err.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        // Load default config
+        function loadDefault() {
+            config = getDefaultConfig();
+            renderQuests();
+        }
+
+        // Update target placeholder based on type
+        function updateTargetPlaceholder() {
+            const type = document.getElementById('questType').value;
+            const input = document.getElementById('questTarget');
+            if (type === 'KILL') {
+                input.placeholder = 'minecraft:zombie';
+            } else {
+                input.placeholder = 'minecraft:iron_ingot';
+            }
+            updatePreview();
+        }
+
+        // Update preview
+        function updatePreview() {
+            const desc = document.getElementById('questDescription').value || 'Quest description here';
+            const baseCount = parseInt(document.getElementById('questBaseCount').value) || 10;
+            document.getElementById('questPreview').textContent = formatDescription(desc, baseCount, 0);
+        }
+
+        // Modal functions
+        function showAddModal() {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = 'Add Quest';
+            document.getElementById('questId').value = '';
+            document.getElementById('questId').disabled = false;
+            document.getElementById('questType').value = 'KILL';
+            document.getElementById('questTarget').value = '';
+            document.getElementById('questBaseCount').value = '10';
+            document.getElementById('questWeight').value = '5.0';
+            document.getElementById('questMinGamestage').value = '0';
+            document.getElementById('questMaxGamestage').value = '-1';
+            document.getElementById('questDescription').value = '';
+            document.getElementById('rewardEmeralds').value = '5';
+            document.getElementById('rewardExperience').value = '100';
+            document.getElementById('rewardItem').value = '';
+            document.getElementById('rewardItemCount').value = '1';
+            document.getElementById('rewardItemEnchanted').checked = false;
+            updateTargetPlaceholder();
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        function editQuest(id) {
+            const quest = config.quests.find(q => q.id === id);
+            if (!quest) return;
+
+            editingId = id;
+            document.getElementById('modalTitle').textContent = 'Edit Quest';
+            document.getElementById('questId').value = quest.id;
+            document.getElementById('questId').disabled = true;
+            document.getElementById('questType').value = quest.type;
+            document.getElementById('questTarget').value = quest.target;
+            document.getElementById('questBaseCount').value = quest.baseCount;
+            document.getElementById('questWeight').value = quest.weight;
+            document.getElementById('questMinGamestage').value = quest.minGamestage;
+            document.getElementById('questMaxGamestage').value = quest.maxGamestage;
+            document.getElementById('questDescription').value = quest.description;
+            document.getElementById('rewardEmeralds').value = quest.rewards.emeralds || 0;
+            document.getElementById('rewardExperience').value = quest.rewards.experience || 0;
+            document.getElementById('rewardItem').value = quest.rewards.item || '';
+            document.getElementById('rewardItemCount').value = quest.rewards.itemCount || 1;
+            document.getElementById('rewardItemEnchanted').checked = quest.rewards.itemEnchanted || false;
+            updatePreview();
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+            editingId = null;
+        }
+
+        function saveQuest() {
+            const id = document.getElementById('questId').value.trim();
+            if (!id) {
+                alert('Quest ID is required');
+                return;
+            }
+
+            if (!config) config = { quests: [] };
+            if (!config.quests) config.quests = [];
+
+            const quest = {
+                id: id,
+                type: document.getElementById('questType').value,
+                target: document.getElementById('questTarget').value,
+                baseCount: parseInt(document.getElementById('questBaseCount').value) || 10,
+                weight: parseFloat(document.getElementById('questWeight').value) || 5.0,
+                minGamestage: parseInt(document.getElementById('questMinGamestage').value) || 0,
+                maxGamestage: parseInt(document.getElementById('questMaxGamestage').value),
+                description: document.getElementById('questDescription').value,
+                rewards: {
+                    emeralds: parseInt(document.getElementById('rewardEmeralds').value) || 0,
+                    experience: parseInt(document.getElementById('rewardExperience').value) || 0
+                }
+            };
+
+            const itemReward = document.getElementById('rewardItem').value.trim();
+            if (itemReward) {
+                quest.rewards.item = itemReward;
+                quest.rewards.itemCount = parseInt(document.getElementById('rewardItemCount').value) || 1;
+                quest.rewards.itemEnchanted = document.getElementById('rewardItemEnchanted').checked;
+            }
+
+            if (editingId) {
+                // Update existing
+                const index = config.quests.findIndex(q => q.id === editingId);
+                if (index >= 0) {
+                    config.quests[index] = quest;
+                }
+            } else {
+                // Check for duplicate
+                if (config.quests.some(q => q.id === id)) {
+                    alert('A quest with this ID already exists');
+                    return;
+                }
+                config.quests.push(quest);
+            }
+
+            closeModal();
+            renderQuests();
+        }
+
+        function deleteQuest(id) {
+            if (confirm(`Delete quest "${id}"?`)) {
+                config.quests = config.quests.filter(q => q.id !== id);
+                renderQuests();
+            }
+        }
+
+        // Export functions
+        function exportConfig() {
+            if (!config) {
+                alert('No config loaded');
+                return;
+            }
+            document.getElementById('exportText').value = JSON.stringify(config, null, 2);
+            document.getElementById('exportModal').classList.remove('hidden');
+        }
+
+        function closeExportModal() {
+            document.getElementById('exportModal').classList.add('hidden');
+        }
+
+        function copyExport() {
+            const text = document.getElementById('exportText').value;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard!');
+            });
+        }
+
+        function downloadExport() {
+            const text = document.getElementById('exportText').value;
+            const blob = new Blob([text], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'quests.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Default config
+        function getDefaultConfig() {
+            return {
+                "quests": [
+                    {
+                        "id": "kill_zombies_basic",
+                        "type": "KILL",
+                        "target": "minecraft:zombie",
+                        "baseCount": 10,
+                        "weight": 5.0,
+                        "minGamestage": 0,
+                        "maxGamestage": -1,
+                        "description": "Kill %count% zombies",
+                        "rewards": { "emeralds": 5, "experience": 100, "item": "minecraft:iron_ingot", "itemCount": 3, "itemEnchanted": false }
+                    },
+                    {
+                        "id": "kill_skeletons_basic",
+                        "type": "KILL",
+                        "target": "minecraft:skeleton",
+                        "baseCount": 10,
+                        "weight": 5.0,
+                        "minGamestage": 0,
+                        "maxGamestage": -1,
+                        "description": "Kill %count% skeletons",
+                        "rewards": { "emeralds": 5, "experience": 100, "item": "minecraft:arrow", "itemCount": 16, "itemEnchanted": false }
+                    },
+                    {
+                        "id": "kill_spiders_basic",
+                        "type": "KILL",
+                        "target": "minecraft:spider",
+                        "baseCount": 8,
+                        "weight": 4.0,
+                        "minGamestage": 0,
+                        "maxGamestage": -1,
+                        "description": "Kill %count% spiders",
+                        "rewards": { "emeralds": 4, "experience": 80, "item": "minecraft:string", "itemCount": 8, "itemEnchanted": false }
+                    },
+                    {
+                        "id": "kill_bruiser",
+                        "type": "KILL",
+                        "target": "stn_zombies:bruiser_zombie",
+                        "baseCount": 3,
+                        "weight": 2.0,
+                        "minGamestage": 20,
+                        "maxGamestage": -1,
+                        "description": "Eliminate %count% Bruiser Zombies",
+                        "rewards": { "emeralds": 15, "experience": 500, "item": "minecraft:diamond", "itemCount": 2, "itemEnchanted": false }
+                    },
+                    {
+                        "id": "kill_howler",
+                        "type": "KILL",
+                        "target": "stn_zombies:howler_zombie",
+                        "baseCount": 2,
+                        "weight": 1.5,
+                        "minGamestage": 25,
+                        "maxGamestage": -1,
+                        "description": "Silence %count% Howler Zombies",
+                        "rewards": { "emeralds": 18, "experience": 600, "item": "minecraft:diamond_sword", "itemCount": 1, "itemEnchanted": true }
+                    },
+                    {
+                        "id": "kill_broodmother",
+                        "type": "KILL",
+                        "target": "stn_spiders:broodmother_spider",
+                        "baseCount": 1,
+                        "weight": 0.5,
+                        "minGamestage": 40,
+                        "maxGamestage": -1,
+                        "description": "Destroy %count% Broodmother Spider",
+                        "rewards": { "emeralds": 25, "experience": 1000, "item": "minecraft:diamond_chestplate", "itemCount": 1, "itemEnchanted": true }
+                    },
+                    {
+                        "id": "gather_iron",
+                        "type": "GATHER",
+                        "target": "minecraft:iron_ingot",
+                        "baseCount": 16,
+                        "weight": 4.0,
+                        "minGamestage": 0,
+                        "maxGamestage": -1,
+                        "description": "Collect %count% iron ingots",
+                        "rewards": { "emeralds": 8, "experience": 150, "item": "minecraft:chainmail_chestplate", "itemCount": 1, "itemEnchanted": false }
+                    },
+                    {
+                        "id": "gather_coal",
+                        "type": "GATHER",
+                        "target": "minecraft:coal",
+                        "baseCount": 32,
+                        "weight": 5.0,
+                        "minGamestage": 0,
+                        "maxGamestage": -1,
+                        "description": "Collect %count% coal",
+                        "rewards": { "emeralds": 5, "experience": 100, "item": "minecraft:torch", "itemCount": 16, "itemEnchanted": false }
+                    },
+                    {
+                        "id": "gather_diamonds",
+                        "type": "GATHER",
+                        "target": "minecraft:diamond",
+                        "baseCount": 5,
+                        "weight": 1.5,
+                        "minGamestage": 30,
+                        "maxGamestage": -1,
+                        "description": "Collect %count% diamonds",
+                        "rewards": { "emeralds": 20, "experience": 800, "item": "minecraft:diamond_pickaxe", "itemCount": 1, "itemEnchanted": true }
+                    },
+                    {
+                        "id": "fetch_totem",
+                        "type": "FETCH",
+                        "target": "minecraft:totem_of_undying",
+                        "baseCount": 1,
+                        "weight": 0.5,
+                        "minGamestage": 50,
+                        "maxGamestage": -1,
+                        "description": "Bring me a Totem of Undying",
+                        "rewards": { "emeralds": 32, "experience": 1000, "item": "minecraft:diamond_sword", "itemCount": 1, "itemEnchanted": true }
+                    },
+                    {
+                        "id": "fetch_nether_star",
+                        "type": "FETCH",
+                        "target": "minecraft:nether_star",
+                        "baseCount": 1,
+                        "weight": 0.3,
+                        "minGamestage": 70,
+                        "maxGamestage": -1,
+                        "description": "Bring me a Nether Star",
+                        "rewards": { "emeralds": 64, "experience": 2000, "item": "minecraft:netherite_ingot", "itemCount": 2, "itemEnchanted": false }
+                    },
+                    {
+                        "id": "fetch_bruiser_fangs",
+                        "type": "FETCH",
+                        "target": "stn_traders:bruiser_fang",
+                        "baseCount": 3,
+                        "weight": 1.5,
+                        "minGamestage": 25,
+                        "maxGamestage": -1,
+                        "description": "Collect %count% Bruiser Fangs",
+                        "rewards": { "emeralds": 25, "experience": 750, "item": "minecraft:diamond_chestplate", "itemCount": 1, "itemEnchanted": true }
+                    },
+                    {
+                        "id": "fetch_howler_cords",
+                        "type": "FETCH",
+                        "target": "stn_traders:howler_vocal_cord",
+                        "baseCount": 2,
+                        "weight": 1.0,
+                        "minGamestage": 30,
+                        "maxGamestage": -1,
+                        "description": "Collect %count% Howler Vocal Cords",
+                        "rewards": { "emeralds": 30, "experience": 900, "item": "minecraft:diamond_helmet", "itemCount": 1, "itemEnchanted": true }
+                    },
+                    {
+                        "id": "fetch_plague_samples",
+                        "type": "FETCH",
+                        "target": "stn_traders:plague_sample",
+                        "baseCount": 1,
+                        "weight": 0.8,
+                        "minGamestage": 35,
+                        "maxGamestage": -1,
+                        "description": "Obtain a Plague Sample",
+                        "rewards": { "emeralds": 35, "experience": 1000, "item": "minecraft:enchanted_golden_apple", "itemCount": 1, "itemEnchanted": false }
+                    },
+                    {
+                        "id": "fetch_broodmother_egg",
+                        "type": "FETCH",
+                        "target": "stn_traders:broodmother_egg",
+                        "baseCount": 1,
+                        "weight": 0.4,
+                        "minGamestage": 50,
+                        "maxGamestage": -1,
+                        "description": "Collect a Broodmother Egg",
+                        "rewards": { "emeralds": 50, "experience": 1500, "item": "minecraft:netherite_sword", "itemCount": 1, "itemEnchanted": true }
+                    }
+                ]
+            };
+        }
+
+        // Add event listeners for live preview
+        document.getElementById('questDescription').addEventListener('input', updatePreview);
+        document.getElementById('questBaseCount').addEventListener('input', updatePreview);
+
+        // Initialize
+        selectType('all');
+    </script>
+</body>
+</html>

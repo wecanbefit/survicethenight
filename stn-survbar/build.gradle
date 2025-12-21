@@ -1,0 +1,17 @@
+archivesBaseName = "stn-survbar"
+
+dependencies {
+    // Depends on stn-core for ISurvivalNightProvider interface
+    implementation project(':stn-core')
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}
